@@ -1,74 +1,50 @@
-//---------- Interface de la classe <ListeDeTrajet> (fichier ListeDeTrajet.h) ----------------
-#if ! defined ( ListeDeTrajet_H )
-#define ListeDeTrajet_H
+//---------- Interface de la classe <Trajet> (fichier Trajet.h) ----------------
+#if ! defined ( TRAJET_H )
+#define TRAJET_H
 
 //--------------------------------------------------- Interfaces utilisées
-
-#include "Trajet.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
-typedef struct elem {
-    const Trajet * value;
-    elem * next;
-} elem;
-
 //------------------------------------------------------------------------
-// Rôle de la classe <ListeDeTrajet>
+// Rôle de la classe <Trajet>
 //
 //
 //------------------------------------------------------------------------
 
-class ListeDeTrajet
+class Trajet
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    void Add (const Trajet * newTrajet);
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
 
-    void Print ( ) const;
-    // Mode d'emploi :
+    virtual void Print() const;
+    // Mode d'emploi (constructeur de copie) :
     //
     // Contrat :
     //
-
-    void Search (const char* start, const char* end, ListeDeTrajet & result) const;
-    // Mode d'emploi :
-    //      
-    // Contrat :
-    // result est une ListeDeTrajet déjà allouée
 
     const char* GetStart() const;
-    // Mode d'emploi :
-    //      
+    // Mode d'emploi (constructeur de copie) :
+    //
     // Contrat :
-    // 
+    //
 
     const char* GetEnd() const;
-    // Mode d'emploi :
-    //      
+    // Mode d'emploi (constructeur de copie) :
+    //
     // Contrat :
-    // 
-
-
+    //
 
 //------------------------------------------------- Surcharge d'opérateurs
 
-//-------------------------------------------- Constructeurs - destructeur
-    ListeDeTrajet ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
 
-    virtual ~ListeDeTrajet ( );
+//-------------------------------------------- Constructeurs - destructeur
+
+    virtual ~Trajet ( );
     // Mode d'emploi :
     //
     // Contrat :
@@ -77,15 +53,23 @@ public:
 //------------------------------------------------------------------ PRIVE
 
 protected:
+
 //----------------------------------------------------- Méthodes protégées
+
+    Trajet (const char* start, const char* end);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
 //----------------------------------------------------- Attributs protégés
 
-    elem * listTrajet;
+    const char* start; 
+    const char* end;
 
 };
 
-//-------------------------------- Autres définitions dépendantes de <ListeDeTrajet>
+//-------------------------------- Autres définitions dépendantes de <Trajet>
 
-#endif // ListeDeTrajet_H
+#endif // Trajet_H
 
