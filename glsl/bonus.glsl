@@ -2,14 +2,15 @@
 #iChannel1 "self"
 #iKeyboard
 
-const int Steps = 1000;
+const int Steps = 500;
+const int StepsToSun = 60;
 const float Epsilon = 0.01;
 const float T=0.5;
 
 const float rA=1.0;
 const float rB=50.0;
 const float seaLevel = -0.2;
-const float speed = 0.18;
+const float WaterSpeed = 0.18;
 vec3 sunPos = normalize(vec3(0, 1, 5));
 
 const float moveSpeed = 3.0;
@@ -95,7 +96,7 @@ float WaterTurbulence(in vec2 p, in float amplitude, in float fbase, in float at
     int i;
     float res = 0.0;
     float f = fbase;
-    float s = speed;
+    float s = WaterSpeed;
     for (i=0;i<noctave;i++) {
         res = res + amplitude*noise(f*(p + iTime*s*direction.xz));
         amplitude = amplitude*attenuation;
@@ -141,8 +142,8 @@ vec3 WaterNormal(in vec3 p )
 {
     vec3 direction1 = normalize(vec3(1, 0, 0));
     vec3 direction2 = normalize(vec3(0.3, 0, 1));
-    float speed1 = speed*0.5;
-    float speed2 = -speed * 0.6;
+    float speed1 = WaterSpeed*0.5;
+    float speed2 = -WaterSpeed * 0.6;
     float f1 = 0.20;
     float f2 = 0.70;
     float amplitude1 = 1.0;
@@ -159,9 +160,10 @@ vec3 WaterNormal(in vec3 p )
 // u : ray direction
 // h : hit
 // s : Number of steps
-float Trace(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater, out int s)
+float TraceObject(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater, out int s)
 {
     hitTerrain = false;
+    hitWater = false;
 
     // Don't start at the origin
     // instead move a little bit forward
@@ -202,6 +204,43 @@ float Trace(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater, out int s)
     return t;
 }
 
+// Trace ray using ray marching
+// o : ray origin
+// u : ray direction
+// h : hit
+float TraceSun(vec3 o, vec3 u, out bool hitTerrain)
+{
+    hitTerrain = false;
+
+    // Do not start at the origin
+    // instead move a little bit forward
+    float t=rA*0.05; // PEUT-ETRE A CHANGER POUR ETRE PLUS PRECIS
+    
+    for(int i=0; i<StepsToSun; i++)
+    {
+        vec3 p = o+t*u;
+      
+        float vTerrain = Terrain(p);
+        
+        // Hit terrain 
+        if (vTerrain > 0.0)
+        {
+            hitTerrain = true;
+            break;
+        }
+       
+        // Move along ray
+        t += max(Epsilon, -vTerrain)/2.0;  
+
+        // Escape marched far away
+        if (t>rB)
+        {
+            break;
+        }
+    }
+    return t;
+}
+
 // Background color
 vec3 background(vec3 rd)
 {
@@ -220,7 +259,6 @@ vec3 ShadeTerrain(vec3 p, vec3 n, int s, vec3 animatedSunPos)
     
     vec3 objectColor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
 
-    
     float dot = dot(-n, animatedSunPos);
 
     vec3 c;
@@ -337,23 +375,34 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     bool hitTerrain, hitWater;
     int s;
 
-    float t = Trace(ro, rd, hitTerrain, hitWater, s);
-    vec3 pos=ro+t*rd;
+    float t = TraceObject(ro, rd, hitTerrain, hitWater, s);
+    vec3 pos = ro+t*rd;
     
     float sunAngle = 0.999;
 
     vec3 rgb = background(rd);
+    if (hitTerrain || hitWater)
+    {   
+        if (hitTerrain)
+        {
+            vec3 n = TerrainNormal(pos);
+            rgb = ShadeTerrain(pos, n, s, animatedSunPos);
+        }
+        else if (hitWater)
+        {
+            vec3 n = WaterNormal(pos);
+            rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
+        }
 
-    if (hitTerrain)
-    {
-       vec3 n = TerrainNormal(pos);
-       rgb = ShadeTerrain(pos, n, s, animatedSunPos);
-    }
-    
-    else if (hitWater)
-    {
-        vec3 n = WaterNormal(pos);
-        rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
+        rd = normalize(animatedSunPos);
+        bool hitObject;
+        float t = TraceSun(pos, rd, hitObject);
+
+        if (hitObject)
+        {
+            rgb -= (0.3, 0.3, 0.3)/exp(t);
+        }
+
     }
 
     else if (dot(rd, animatedSunPos) > sunAngle)
