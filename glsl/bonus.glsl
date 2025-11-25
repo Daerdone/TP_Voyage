@@ -1,14 +1,19 @@
 #iChannel0 "file://water_normal_map.png"
+#iChannel1 "self"
+#iKeyboard
 
 const int Steps = 1000;
-const float Epsilon = 0.01; // Marching epsilon
+const float Epsilon = 0.01;
 const float T=0.5;
 
-const float rA=1.0; // Minimum ray marching distance from origin
-const float rB=50.0; // Maximum
+const float rA=1.0;
+const float rB=50.0;
 const float seaLevel = -0.2;
-const float speed = 0.18; // Speed of water movement    
+const float speed = 0.18;
 vec3 sunPos = normalize(vec3(0, 1, 5));
+
+const float moveSpeed = 3.0;
+const float mouseSensitivity = 3.0;
 
 
 vec3 sampleWaterNormalMap(vec2 uv)
@@ -21,6 +26,19 @@ vec3 sampleWaterNormalMap(vec2 uv)
 vec3 rotateY(vec3 p, float a) {
    a = 10.0*a;
    return vec3(p.x*cos(a)-p.z*sin(a),p.y,p.x*sin(a)+p.z*cos(a));
+}
+
+vec3 rotateX(vec3 p, float a) {
+   return vec3(p.x, p.y*cos(a)-p.z*sin(a), p.y*sin(a)+p.z*cos(a));
+}
+
+mat3 lookAtMatrix(float yaw, float pitch) {
+    float cy = cos(yaw), sy = sin(yaw);
+    float cp = cos(pitch), sp = sin(pitch);
+    vec3 forward = vec3(sy * cp, sp, -cy * cp);
+    vec3 right = vec3(cy, 0.0, sy);
+    vec3 up = cross(right, forward);
+    return mat3(right, up, forward);
 }
 
 // NOISE FUNCTIONS
@@ -98,7 +116,6 @@ float Terrain(vec3 p)
 
 float Water(vec3 p)
 {
-<<<<<<< HEAD
     vec3 direction = vec3(1, 0, 0.5);
     float noiseValue = WaterTurbulence(p.xz, 0.04, 0.7, 0.4, 4, direction)/2.;
     direction = rotateY(direction, 1.);
@@ -255,37 +272,79 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec3 animatedSunPos = rotateY(sunPos, iTime*0.06);
 
    vec2 pixel = (gl_FragCoord.xy / iResolution.xy)*2.0-1.0;
-
-   // compute ray origin and direction
    float asp = iResolution.x / iResolution.y;
-   vec3 rd = vec3(asp*pixel.x, pixel.y - 0.5, -3.0);
-   vec3 ro = vec3(0.0, 5.0, 5.0);
 
-   vec2 mouse = iMouse.xy / iResolution.xy;
-   float a=mouse.x;
-   rd.z = rd.z+2.0*mouse.y;
-   rd = normalize(rd);
-   ro = rotateY(ro, a);
-   rd = rotateY(rd, a);
+   vec4 stored = texture(iChannel1, vec2(0.5) / iResolution.xy);
+   vec3 camPos = stored.xyz;
+   float yaw = stored.w;
+   
+   vec4 stored2 = texture(iChannel1, vec2(1.5, 0.5) / iResolution.xy);
+   float pitch = stored2.x;
+   vec3 prevMouse = stored2.yzw;
 
-   // Trace ray
+   if (iFrame == 0) {
+       camPos = vec3(0.0, 5.0, 5.0);
+       yaw = 0.0;
+       pitch = 0.0;
+       prevMouse = vec3(0.0);
+   }
+
+   if (iMouse.z > 0.0) {
+       vec2 mouseDelta = iMouse.xy - prevMouse.xy;
+       if (prevMouse.z > 0.0) {
+           yaw += mouseDelta.x * mouseSensitivity / iResolution.x;
+           pitch += mouseDelta.y * mouseSensitivity / iResolution.y;
+           pitch = clamp(pitch, -1.5, 1.5);
+       }
+       prevMouse = vec3(iMouse.xy, 1.0);
+   } else {
+       prevMouse = vec3(iMouse.xy, 0.0);
+   }
+
+   mat3 camMat = lookAtMatrix(yaw, pitch);
+   vec3 forward = camMat[2];
+   vec3 right = camMat[0];
+
+   float dt = iTimeDelta;
+   vec3 moveDir = vec3(0.0);
+   
+   if (isKeyDown(Key_Shift)) dt *= 5.0;
+
+   if (isKeyDown(Key_Z)) moveDir += forward;
+   if (isKeyDown(Key_S)) moveDir -= forward;
+   if (isKeyDown(Key_D)) moveDir += right;
+   if (isKeyDown(Key_Q)) moveDir -= right;
+   if (isKeyDown(Key_E)) moveDir.y += 1.0;
+   if (isKeyDown(Key_A)) moveDir.y -= 1.0;
+   
+   if (length(moveDir) > 0.0) {
+       camPos += normalize(moveDir) * moveSpeed * dt;
+   }
+
+   if (fragCoord.x < 1.0 && fragCoord.y < 1.0) {
+       fragColor = vec4(camPos, yaw);
+       return;
+   }
+   if (fragCoord.x < 2.0 && fragCoord.x >= 1.0 && fragCoord.y < 1.0) {
+       fragColor = vec4(pitch, prevMouse);
+       return;
+   }
+
+   vec3 rd = normalize(vec3(asp*pixel.x, pixel.y, 2.0));
+   rd = camMat * rd;
+   vec3 ro = camPos;
+
    bool hitTerrain, hitWater;
-
-   // Number of steps
    int s;
 
    float t = Trace(ro, rd, hitTerrain, hitWater, s);
    vec3 pos=ro+t*rd;
    
-   // Shade background
    vec3 rgb = background(rd);
 
    if (hitTerrain)
    {
-      // Compute normal
       vec3 n = TerrainNormal(pos);
-
-      // Shade object with light
       rgb = ShadeTerrain(pos, n, s, animatedSunPos);
    }
    
@@ -294,8 +353,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
        vec3 n = WaterNormal(pos);
        rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
    }
-
-    // SOLEIL
 
     float sunAngle = 0.999;
     if (dot(rd, animatedSunPos) > sunAngle)
