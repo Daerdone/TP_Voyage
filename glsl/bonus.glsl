@@ -1,12 +1,21 @@
+#iChannel0 "file://water_normal_map.png"
+
 const int Steps = 1000;
 const float Epsilon = 0.01; // Marching epsilon
 const float T=0.5;
 
 const float rA=1.0; // Minimum ray marching distance from origin
 const float rB=50.0; // Maximum
-const float seaLevel = -0.4;
+const float seaLevel = -0.2;
 const float speed = 0.18; // Speed of water movement    
-const vec3 sunPos = vec3(10, 1, 1);
+vec3 sunPos = normalize(vec3(0, 1, 5));
+
+
+vec3 sampleWaterNormalMap(vec2 uv)
+{
+    vec3 n = texture(iChannel0, uv).xyz * 2.0 - 1.0;
+    return vec3(n.x, n.z, n.y);
+}
 
 // NOISE FUNCTIONS
 
@@ -87,7 +96,7 @@ float Terrain(vec3 p)
 
 float Water(vec3 p)
 {
-    float noiseValue = WaterTurbulence(p.xz, 0.3, 0.20, 0.4, 5);
+    float noiseValue = WaterTurbulence(p.xz, 0.3, 0.20, 0.4, 3);
     return noiseValue + seaLevel - p.y;
 }
 
@@ -116,13 +125,19 @@ vec3 TerrainNormal(in vec3 p )
 // p : point
 vec3 WaterNormal(in vec3 p )
 {
-   float eps = 0.0001;
-   vec3 n;
-   float v = Water(p);
-   n.x = Water( vec3(p.x+eps, p.y, p.z) ) - v;
-   n.y = Water( vec3(p.x, p.y+eps, p.z) ) - v;
-   n.z = Water( vec3(p.x, p.y, p.z+eps) ) - v;
-   return normalize(n);
+    vec3 direction1 = normalize(vec3(1, 0, 0));
+    vec3 direction2 = normalize(vec3(0.3, 0, 1));
+    float speed1 = speed*0.5;
+    float speed2 = -speed * 0.6;
+    float f1 = 0.20;
+    float f2 = 0.70;
+    float amplitude1 = 1.0;
+    float amplitude2 = 0.6;
+    vec2 pos1 = p.xz + direction1.xz * iTime * speed1;
+    vec2 pos2 = p.xz + direction2.xz * iTime * speed2;
+    vec3 n1 = normalize(sampleWaterNormalMap(pos1*f1));
+    vec3 n2 = normalize(sampleWaterNormalMap(pos2*f2));
+    return normalize(amplitude1*n1 + amplitude2*n2);
 }
 
 // Trace ray using ray marching
@@ -184,56 +199,64 @@ vec3 background(vec3 rd)
 // Shading and lighting
 // p : point,
 // n : normal at point
-vec3 ShadeTerrain(vec3 p, vec3 n, int s)
+vec3 ShadeTerrain(vec3 p, vec3 n, int s, vec3 animatedSunPos)
 {
    // point light
    const vec3 lightColor = vec3(1.0, 1.0, 1.0);
    
-   vec3 ambientcolor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
+   vec3 objectColor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
 
    
-   // light direction
-   vec3 l = normalize(sunPos - p);
+   float dot = dot(-n, animatedSunPos);
 
-   // Not even Phong shading, use weighted cosine instead for smooth transitions
-   float diff = 0.5*(1.0+dot(n, l));
-   
-   // we mix ambient and diffuse components with an equal weight
-   vec3 c =  0.5*ambientcolor + 0.5*diff*lightColor;
+    vec3 c;
+   if (dot < 0.0) // Ombre
+   {
+        c = mix(objectColor*0.4, objectColor*0.3, dot);
+   }
+   else // Lumiere
+   {
+        c = lightColor*mix(objectColor*0.5, (0.1 + 1.2*objectColor), dot);
+   }
    return c;
 }
 
-vec3 ShadeWater(vec3 p, vec3 n, int s)
+vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, int s, vec3 animatedSunPos)
 {
    // point light
-   const vec3 lightColor = vec3(1.0, 1.0, 1.0);
+   const vec3 lightColor = vec3(1, 1, 1);
    
-   vec3 ambientcolor = vec3(0.1, 0.1, 1);
+   vec3 objectColor = vec3(0.5, 0.7, .9);
 
-   
-   // light direction
-   vec3 l = normalize(sunPos - p);
-
-   // Not even Phong shading, use weighted cosine instead for smooth transitions
-   float diff = 1.5*(0.5+dot(-n, l));
-   
-   // we mix ambient and diffuse components with an equal weight
+    // Specular
+    vec3 viewDir = normalize(-rd);
+    vec3 reflectDir = reflect(-animatedSunPos, n);
     vec3 specularColor = vec3(1.0, 1.0, 1.0);
-    vec3 diffuseColor = 0.5*ambientcolor + 0.3*diff*lightColor;
+    float specular = pow(max(dot(reflectDir, viewDir), 0.0), 32.0);
 
-   vec3 c =  dot(-n, l) < 0.75 ? diffuseColor : specularColor; //
+    // Diffuse
+    float dotP = dot(normalize(n), normalize(animatedSunPos));
+
+    vec3 diffuseColor;
+    if (dotP < 0.0) // Ombre
+    {
+        diffuseColor = mix(objectColor*0.7, objectColor*0.6, dotP);
+    }
+    else // Lumiere
+    {
+        diffuseColor = lightColor*mix(objectColor*0.75, (0.1 + 1.2*objectColor), dotP);
+    }
+
+    vec3 c = 0.9*diffuseColor + specularColor*specular;
    return c;
 }
-
-
-
-
-
 
 // MAIN
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
+    vec3 animatedSunPos = rotateY(sunPos, iTime*0.06);
+
    vec2 pixel = (gl_FragCoord.xy / iResolution.xy)*2.0-1.0;
 
    // compute ray origin and direction
@@ -242,7 +265,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
    vec3 ro = vec3(0.0, 5.0, 5.0);
 
    vec2 mouse = iMouse.xy / iResolution.xy;
-   float a=-mouse.x;//iTime*0.25;
+   float a=mouse.x;
    rd.z = rd.z+2.0*mouse.y;
    rd = normalize(rd);
    ro = rotateY(ro, a);
@@ -266,14 +289,24 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
       vec3 n = TerrainNormal(pos);
 
       // Shade object with light
-      rgb = ShadeTerrain(pos, n, s);
+      rgb = ShadeTerrain(pos, n, s, animatedSunPos);
    }
    
    else if (hitWater)
    {
        vec3 n = WaterNormal(pos);
-       rgb = ShadeWater(pos, n, s);
+       rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
    }
+
+    // SOLEIL
+
+    float sunAngle = 0.999;
+    if (dot(rd, animatedSunPos) > sunAngle)
+    {
+        float f = smoothstep(sunAngle, 1.0, dot(rd, animatedSunPos));
+        vec3 sunColor = vec3(1.0, 0.9, 0.6);
+        rgb += sunColor*f*f;
+    }
 
    fragColor=vec4(rgb, 1.0);
 }
