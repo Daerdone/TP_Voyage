@@ -90,9 +90,9 @@ float Terrain(vec3 p)
 float Water(vec3 p)
 {
     vec3 direction = vec3(1, 0, 0.5);
-    float noiseValue = WaterTurbulence(p.xz, 0.04, 0.7, 0.4, 2, direction)/2.;
+    float noiseValue = WaterTurbulence(p.xz, 0.04, 0.7, 0.4, 4, direction)/2.;
     direction = rotateY(direction, 1.);
-    noiseValue += WaterTurbulence(p.xz, 0.04, 0.7, 0.4, 2, direction)/2.;
+    noiseValue += WaterTurbulence(p.xz, 0.04, 0.7, 0.4, 4, direction)/2.;
     return noiseValue + seaLevel - p.y;
 }
 
