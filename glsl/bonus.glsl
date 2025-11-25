@@ -24,12 +24,12 @@ vec3 sampleWaterNormalMap(vec2 uv)
 
 // Transforms
 vec3 rotateY(vec3 p, float a) {
-   a = 10.0*a;
-   return vec3(p.x*cos(a)-p.z*sin(a),p.y,p.x*sin(a)+p.z*cos(a));
+    a = 10.0*a;
+    return vec3(p.x*cos(a)-p.z*sin(a),p.y,p.x*sin(a)+p.z*cos(a));
 }
 
 vec3 rotateX(vec3 p, float a) {
-   return vec3(p.x, p.y*cos(a)-p.z*sin(a), p.y*sin(a)+p.z*cos(a));
+    return vec3(p.x, p.y*cos(a)-p.z*sin(a), p.y*sin(a)+p.z*cos(a));
 }
 
 mat3 lookAtMatrix(float yaw, float pitch) {
@@ -59,7 +59,7 @@ float noise( in vec2 p ) {
 	vec2 i = floor( p + (p.x+p.y)*K1 );
 	
     vec2 a = p - i + (i.x+i.y)*K2;
-    vec2 o = step(a.yx,a.xy);    
+    vec2 o = step(a.yx,a.xy);
     vec2 b = a - o + K2;
 	vec2 c = a - 1.0 + 2.0*K2;
 
@@ -126,13 +126,13 @@ float Water(vec3 p)
 // p : point
 vec3 TerrainNormal(in vec3 p )
 {
-   float eps = 0.0001;
-   vec3 n;
-   float v = Terrain(p);
-   n.x = Terrain( vec3(p.x+eps, p.y, p.z) ) - v;
-   n.y = Terrain( vec3(p.x, p.y+eps, p.z) ) - v;
-   n.z = Terrain( vec3(p.x, p.y, p.z+eps) ) - v;
-   return normalize(n);
+    float eps = 0.0001;
+    vec3 n;
+    float v = Terrain(p);
+    n.x = Terrain( vec3(p.x+eps, p.y, p.z) ) - v;
+    n.y = Terrain( vec3(p.x, p.y+eps, p.z) ) - v;
+    n.z = Terrain( vec3(p.x, p.y, p.z+eps) ) - v;
+    return normalize(n);
 }
 
 // Calculate object normal
@@ -161,52 +161,52 @@ vec3 WaterNormal(in vec3 p )
 // s : Number of steps
 float Trace(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater, out int s)
 {
-   hitTerrain = false;
+    hitTerrain = false;
 
-   // Don't start at the origin
-   // instead move a little bit forward
-   float t=rA;
+    // Don't start at the origin
+    // instead move a little bit forward
+    float t=rA;
 
-   for(int i=0; i<Steps; i++)
-   {
-      s=i;
-      vec3 p = o+t*u;
+    for(int i=0; i<Steps; i++)
+    {
+        s=i;
+        vec3 p = o+t*u;
       
-      float vTerrain = Terrain(p);
-      float vWater = Water(p);
-      
-           
-      // Hit terrain 
-      if (vTerrain > 0.0)
-      {
-         s=i;
-         hitTerrain = true;
-         break;
-      }
-      if (vWater > 0.0)
-      {
-          s=i;
-          hitWater = true;
-          break;
-      }
-      
-      // Move along ray
-      t += max(Epsilon, min(-vTerrain, -vWater)/2.0);  
+        float vTerrain = Terrain(p);
+        float vWater = Water(p);
+       
+        
+        // Hit terrain 
+        if (vTerrain > 0.0)
+        {
+            s=i;
+            hitTerrain = true;
+            break;
+        }
+        if (vWater > 0.0)
+        {
+            s=i;
+            hitWater = true;
+            break;
+        }
+       
+        // Move along ray
+        t += max(Epsilon, min(-vTerrain, -vWater)/2.0);  
 
-      // Escape marched far away
-      if (t>rB)
-      {
-         break;
-      }
-   }
-   return t;
+        // Escape marched far away
+        if (t>rB)
+        {
+            break;
+        }
+    }
+    return t;
 }
 
 // Background color
 vec3 background(vec3 rd)
 {
-   return mix(vec3(0.8, 0.8, 0.9), vec3(0.6, 0.9, 1.0), rd.y*1.0+0.25);
-   //return mix(vec3(1, 1, 0), vec3(1, 0, 0)*0.9, rd.y*2.0+0.30);
+    return mix(vec3(0.8, 0.8, 0.9), vec3(0.6, 0.9, 1.0), rd.y*1.0+0.25);
+    //return mix(vec3(1, 1, 0), vec3(1, 0, 0)*0.9, rd.y*2.0+0.30);
 
 }
 
@@ -215,32 +215,32 @@ vec3 background(vec3 rd)
 // n : normal at point
 vec3 ShadeTerrain(vec3 p, vec3 n, int s, vec3 animatedSunPos)
 {
-   // point light
-   const vec3 lightColor = vec3(1.0, 1.0, 1.0);
-   
-   vec3 objectColor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
+    // point light
+    const vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    
+    vec3 objectColor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
 
-   
-   float dot = dot(-n, animatedSunPos);
+    
+    float dot = dot(-n, animatedSunPos);
 
     vec3 c;
-   if (dot < 0.0) // Ombre
-   {
+    if (dot < 0.0) // Ombre
+    {
         c = mix(objectColor*0.4, objectColor*0.3, dot);
-   }
-   else // Lumiere
-   {
+    }
+    else // Lumiere
+    {
         c = lightColor*mix(objectColor*0.5, (0.1 + 1.2*objectColor), dot);
-   }
-   return c;
+    }
+    return c;
 }
 
 vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, int s, vec3 animatedSunPos)
 {
-   // point light
-   const vec3 lightColor = vec3(1, 1, 1);
-   
-   vec3 objectColor = vec3(0.5, 0.7, .9);
+    // point light
+    const vec3 lightColor = vec3(1, 1, 1);
+    
+    vec3 objectColor = vec3(0.5, 0.7, .9);
 
     // Specular
     vec3 viewDir = normalize(-rd);
@@ -262,7 +262,7 @@ vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, int s, vec3 animatedSunPos)
     }
 
     vec3 c = 0.9*diffuseColor + specularColor*specular;
-   return c;
+    return c;
 }
 
 // MAIN
@@ -271,97 +271,98 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec3 animatedSunPos = rotateY(sunPos, iTime*0.06);
 
-   vec2 pixel = (gl_FragCoord.xy / iResolution.xy)*2.0-1.0;
-   float asp = iResolution.x / iResolution.y;
+    vec2 pixel = (gl_FragCoord.xy / iResolution.xy)*2.0-1.0;
+    float asp = iResolution.x / iResolution.y;
 
-   vec4 stored = texture(iChannel1, vec2(0.5) / iResolution.xy);
-   vec3 camPos = stored.xyz;
-   float yaw = stored.w;
-   
-   vec4 stored2 = texture(iChannel1, vec2(1.5, 0.5) / iResolution.xy);
-   float pitch = stored2.x;
-   vec3 prevMouse = stored2.yzw;
+    vec4 stored = texture(iChannel1, vec2(0.5) / iResolution.xy);
+    vec3 camPos = stored.xyz;
+    float yaw = stored.w;
+    
+    vec4 stored2 = texture(iChannel1, vec2(1.5, 0.5) / iResolution.xy);
+    float pitch = stored2.x;
+    vec3 prevMouse = stored2.yzw;
 
-   if (iFrame == 0) {
-       camPos = vec3(0.0, 5.0, 5.0);
-       yaw = 0.0;
-       pitch = 0.0;
-       prevMouse = vec3(0.0);
-   }
+    if (iFrame == 0) {
+        camPos = vec3(0.0, 5.0, 5.0);
+        yaw = 0.0;
+        pitch = 0.0;
+        prevMouse = vec3(0.0);
+    }
 
-   if (iMouse.z > 0.0) {
-       vec2 mouseDelta = iMouse.xy - prevMouse.xy;
-       if (prevMouse.z > 0.0) {
-           yaw += mouseDelta.x * mouseSensitivity / iResolution.x;
-           pitch += mouseDelta.y * mouseSensitivity / iResolution.y;
-           pitch = clamp(pitch, -1.5, 1.5);
-       }
-       prevMouse = vec3(iMouse.xy, 1.0);
-   } else {
-       prevMouse = vec3(iMouse.xy, 0.0);
-   }
+    if (iMouse.z > 0.0) {
+        vec2 mouseDelta = iMouse.xy - prevMouse.xy;
+        if (prevMouse.z > 0.0) {
+            yaw += mouseDelta.x * mouseSensitivity / iResolution.x;
+            pitch += mouseDelta.y * mouseSensitivity / iResolution.y;
+            pitch = clamp(pitch, -1.5, 1.5);
+        }
+        prevMouse = vec3(iMouse.xy, 1.0);
+    } else {
+        prevMouse = vec3(iMouse.xy, 0.0);
+    }
 
-   mat3 camMat = lookAtMatrix(yaw, pitch);
-   vec3 forward = camMat[2];
-   vec3 right = camMat[0];
+    mat3 camMat = lookAtMatrix(yaw, pitch);
+    vec3 forward = camMat[2];
+    vec3 right = camMat[0];
 
-   float dt = iTimeDelta;
-   vec3 moveDir = vec3(0.0);
-   
-   if (isKeyDown(Key_Shift)) dt *= 5.0;
+    float dt = iTimeDelta;
+    vec3 moveDir = vec3(0.0);
+    
+    if (isKeyDown(Key_Shift)) dt *= 5.0;
 
-   if (isKeyDown(Key_Z)) moveDir += forward;
-   if (isKeyDown(Key_S)) moveDir -= forward;
-   if (isKeyDown(Key_D)) moveDir += right;
-   if (isKeyDown(Key_Q)) moveDir -= right;
-   if (isKeyDown(Key_E)) moveDir.y += 1.0;
-   if (isKeyDown(Key_A)) moveDir.y -= 1.0;
-   
-   if (length(moveDir) > 0.0) {
-       camPos += normalize(moveDir) * moveSpeed * dt;
-   }
+    if (isKeyDown(Key_Z)) moveDir += forward;
+    if (isKeyDown(Key_S)) moveDir -= forward;
+    if (isKeyDown(Key_D)) moveDir += right;
+    if (isKeyDown(Key_Q)) moveDir -= right;
+    if (isKeyDown(Key_E)) moveDir.y += 1.0;
+    if (isKeyDown(Key_A)) moveDir.y -= 1.0;
+    
+    if (length(moveDir) > 0.0) {
+        camPos += normalize(moveDir) * moveSpeed * dt;
+    }
 
-   if (fragCoord.x < 1.0 && fragCoord.y < 1.0) {
-       fragColor = vec4(camPos, yaw);
-       return;
-   }
-   if (fragCoord.x < 2.0 && fragCoord.x >= 1.0 && fragCoord.y < 1.0) {
-       fragColor = vec4(pitch, prevMouse);
-       return;
-   }
+    if (fragCoord.x < 1.0 && fragCoord.y < 1.0) {
+        fragColor = vec4(camPos, yaw);
+        return;
+    }
+    if (fragCoord.x < 2.0 && fragCoord.x >= 1.0 && fragCoord.y < 1.0) {
+        fragColor = vec4(pitch, prevMouse);
+        return;
+    }
 
-   vec3 rd = normalize(vec3(asp*pixel.x, pixel.y, 2.0));
-   rd = camMat * rd;
-   vec3 ro = camPos;
+    vec3 rd = normalize(vec3(asp*pixel.x, pixel.y, 2.0));
+    rd = camMat * rd;
+    vec3 ro = camPos;
 
-   bool hitTerrain, hitWater;
-   int s;
+    bool hitTerrain, hitWater;
+    int s;
 
-   float t = Trace(ro, rd, hitTerrain, hitWater, s);
-   vec3 pos=ro+t*rd;
-   
-   vec3 rgb = background(rd);
-
-   if (hitTerrain)
-   {
-      vec3 n = TerrainNormal(pos);
-      rgb = ShadeTerrain(pos, n, s, animatedSunPos);
-   }
-   
-   else if (hitWater)
-   {
-       vec3 n = WaterNormal(pos);
-       rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
-   }
-
+    float t = Trace(ro, rd, hitTerrain, hitWater, s);
+    vec3 pos=ro+t*rd;
+    
     float sunAngle = 0.999;
-    if (dot(rd, animatedSunPos) > sunAngle)
+
+    vec3 rgb = background(rd);
+
+    if (hitTerrain)
+    {
+       vec3 n = TerrainNormal(pos);
+       rgb = ShadeTerrain(pos, n, s, animatedSunPos);
+    }
+    
+    else if (hitWater)
+    {
+        vec3 n = WaterNormal(pos);
+        rgb = ShadeWater(pos, n, rd, s, animatedSunPos);
+    }
+
+    else if (dot(rd, animatedSunPos) > sunAngle)
     {
         float f = smoothstep(sunAngle, 1.0, dot(rd, animatedSunPos));
         vec3 sunColor = vec3(1.0, 0.9, 0.6);
         rgb += sunColor*f*f;
     }
 
-   fragColor=vec4(rgb, 1.0);
+    fragColor=vec4(rgb, 1.0);
 }
 
