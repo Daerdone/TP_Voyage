@@ -2,13 +2,10 @@
 #iChannel1 "self" // permet de lire les pixels de l'image précédente, pour y stocker la position et l'orientation de la caméra
 #iKeyboard
 
-const int Steps = 500;
-const int StepsToSun = 60;
 const float Epsilon = 0.01;
-const float T=0.5;
 
-const float rA=1.0;
-const float rB=50.0;
+const float minRenderDistance=0.5;
+const float maxRenderDistance=35.0; // = render distance
 const float seaLevel = -0.2;
 const float WaterSpeed = 0.18;
 vec3 sunPos = normalize(vec3(0, 3, 5));
@@ -158,19 +155,16 @@ vec3 WaterNormal(in vec3 p )
 }
 
 // Trace ray using ray marching
-// o : ray origin
-// u : ray direction
-// h : hit
-float TraceObject(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater)
+float Raytrace(vec3 o, vec3 u, int maxRaySteps, out bool hitTerrain, out bool hitWater)
 {
     hitTerrain = false;
     hitWater = false;
 
     // Don't start at the origin
     // instead move a little bit forward
-    float t=rA;
+    float t=minRenderDistance;
 
-    for(int i=0; i<Steps; i++)
+    for(int i=0; i<maxRaySteps; i++)
     {
         vec3 p = o+t*u;
       
@@ -194,44 +188,7 @@ float TraceObject(vec3 o, vec3 u, out bool hitTerrain, out bool hitWater)
         t += max(Epsilon, min(-vTerrain, -vWater)/2.0);  
 
         // Escape marched far away
-        if (t>rB)
-        {
-            break;
-        }
-    }
-    return t;
-}
-
-// Trace ray using ray marching
-// o : ray origin
-// u : ray direction
-// h : hit
-float TraceSun(vec3 o, vec3 u, out bool hitTerrain)
-{
-    hitTerrain = false;
-
-    // Do not start at the origin
-    // instead move a little bit forward
-    float t=rA*0.05; // PEUT-ETRE A CHANGER POUR ETRE PLUS PRECIS
-    
-    for(int i=0; i<StepsToSun; i++)
-    {
-        vec3 p = o+t*u;
-      
-        float vTerrain = Terrain(p);
-        
-        // Hit terrain 
-        if (vTerrain > 0.0)
-        {
-            hitTerrain = true;
-            break;
-        }
-       
-        // Move along ray
-        t += max(Epsilon, -vTerrain)/2.0;  
-
-        // Escape marched far away
-        if (t>rB)
+        if (t>maxRenderDistance)
         {
             break;
         }
@@ -244,7 +201,6 @@ vec3 background(vec3 rd)
 {
     return mix(vec3(0.8, 0.8, 0.9), vec3(0.6, 0.9, 1.0), rd.y*1.0+0.25);
     //return mix(vec3(1, 1, 0), vec3(1, 0, 0)*0.9, rd.y*2.0+0.30);
-
 }
 
 // Shading and lighting
@@ -290,7 +246,7 @@ vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, vec3 animatedSunPos, bool castedShadow,
 
     vec3 lightColor = sunColor*mix(objectColor*0.75, (0.1 + 1.2*objectColor), dotP);
     vec3 shadowColor = mix(objectColor*0.7, objectColor*0.6, dotP);
-    vec3 castedShadowColor = shadowColor; //mix(shadowColor, lightColor, min(sunDistance * 0.15, 1.0));
+    vec3 castedShadowColor = shadowColor; // mix(shadowColor, lightColor, min(sunDistance * 0.15, 1.0));
 
     vec3 diffuseColor = normalShadow ? shadowColor : castedShadow ? castedShadowColor : lightColor;
 
@@ -386,23 +342,24 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     // Premier rayon pour déterminer les objets touchés
 
-    bool hitTerrain, hitWater;
-    float distance = TraceObject(ro, rd, hitTerrain, hitWater);
+    bool isTerrain, isWater;
+    float distance = Raytrace(ro, rd, 1000, isTerrain, isWater);
     vec3 pos = ro+distance*rd;
 
     // Deuxième rayon pour savoir si cette position est éclairée par le soleil
 
+    bool isShadowedByTerrain, isShadowedByWater;
     vec3 animatedSunPos = normalize(rotateY(sunPos, iTime*0.06));
-    bool isShadowed;
-    float sunDistance = TraceSun(pos, animatedSunPos, isShadowed);
-    if (hitTerrain || hitWater)
+    float sunDistance = Raytrace(pos, animatedSunPos, 60, isShadowedByTerrain, isShadowedByWater);
+    bool isShadowed = isShadowedByTerrain || isShadowedByWater;    
+    if (isTerrain || isWater)
     {   
-        if (hitTerrain)
+        if (isTerrain)
         {
             vec3 n = TerrainNormal(pos);
             rgb = ShadeTerrain(pos, n, animatedSunPos, isShadowed, sunDistance);
         }
-        else if (hitWater)
+        else if (isWater)
         {
             vec3 n = WaterNormal(pos);
             rgb = ShadeWater(pos, n, rd, animatedSunPos, isShadowed, sunDistance);
