@@ -5,6 +5,7 @@
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <cstring>
 
 //------------------------------------------------------ Include personnel
 #include "TrajetSimple.h"
@@ -19,18 +20,20 @@ void TrajetSimple::Print() const
 //
 {
     Trajet::Print();
-    cout << "   avec le moyen de transport " << moyenDeTransport << ".";
+    cout << " (" << moyenDeTransport << ")" << endl;
 }
 
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-TrajetSimple::TrajetSimple(char* start, char* end, char* moyenDeTransport) : Trajet(start, end), moyenDeTransport(moyenDeTransport)
+TrajetSimple::TrajetSimple(const char* start, const char* end, const char* Transport) : Trajet(start, end)
 {
     #ifdef MAP
         cout << "Appel au constructeur de <TrajetSimple>" << endl;
     #endif
+
+    strcpy(moyenDeTransport, Transport);
 }
 
 
@@ -38,10 +41,10 @@ TrajetSimple::~TrajetSimple ( )
 // Algorithme :
 //
 {
-#ifdef MAP
-    cout << "Appel au destructeur de <TrajetSimple>" << endl;
-#endif
-} //----- Fin de ~TrajetSimple
+    #ifdef MAP
+        cout << "Appel au destructeur de <TrajetSimple>" << endl;
+    #endif
+}
 
 
 //------------------------------------------------------------------ PRIVE
