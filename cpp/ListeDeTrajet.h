@@ -93,6 +93,7 @@ protected:
 //----------------------------------------------------- Attributs protégés
 
     elem * listTrajet;
+    elem * endList;
 
 };
 

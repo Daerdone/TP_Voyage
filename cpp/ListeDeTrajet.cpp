@@ -22,7 +22,8 @@ using namespace std;
 void ListeDeTrajet::AskNewTrajet()
 {
 
-    cout << "Voulez vous créer un trajet simple (s) ou composé ? (c)" << endl;
+    cout << endl << "Voulez vous créer un trajet simple (s) ou composé ? (c)" << endl;
+    cout << ">>";
     char type;
     cin >> type;
 
@@ -32,11 +33,12 @@ void ListeDeTrajet::AskNewTrajet()
     
     if (type == 's')
     {
-        cout << "Entrez votre trajet selon le format suivant :" << endl;
-        cout << "<ville de départ>\n<ville d'arrivée>\n<moyen de transport>" << endl;
-        
+        cout << endl << "Entrez votre trajet :" << endl;
+        cout << ">> Ville de départ : ";
         cin >> start;
+        cout << ">> Ville d'arrivée : ";
         cin >> end;
+        cout << ">> Moyen de transport : ";
         cin >> transport;
 
         TrajetSimple* newTrajet = new TrajetSimple(start, end, transport);
@@ -47,11 +49,11 @@ void ListeDeTrajet::AskNewTrajet()
     {
         TrajetCompose* trajetCompose = new TrajetCompose();
 
-        cout << "Entrez vos trajets selon le format suivant :" << endl;
-        cout << "<ville de départ>\n<ville d'arrivée>\n<moyen de transport>" << endl;
-
+        cout << endl << "Entrez vos trajets :" << endl;
+        
         while (true)
         {
+            cout << ">> Ville de départ : ";
             cin >> start;
 
             if (strcmp(start, "stop") == 0)
@@ -67,12 +69,14 @@ void ListeDeTrajet::AskNewTrajet()
                 continue;
             }
 
+            cout << ">> Ville d'arrivée : ";
             cin >> end;
+            cout << ">> Moyen de transport : ";
             cin >> transport;
 
             trajetCompose->AddTrajet(start, end, transport);
 
-            cout << "Entrez 'stop' pour terminer ou une autre commande pour continuer." << endl;
+            cout << "Entrez 'stop' pour terminer ou un autre trajet pour continuer." << endl;
         }
         
         if (trajetCompose->GetEnd() != NULL)
@@ -86,19 +90,18 @@ void ListeDeTrajet::AskNewTrajet()
     delete[] transport;
 }
 
-
 void ListeDeTrajet::AskSearch() const
 {
     char* start = new char[100];
     char* end = new char[100];
 
-    cout << "Entrez la ville de départ et d'arrivée selon le format suivant :" << endl;
-    cout << "<ville de départ>\n<ville d'arrivée>" << endl;
-
+    cout << endl << "Recherche :" << endl;
+    cout << ">> Ville de départ : ";
     cin >> start;
+    cout << ">> Ville d'arrivée : ";
     cin >> end;
 
-    cout << "Résultats de la recherche :" << endl;
+    cout << endl << "Résultats de la recherche :" << endl;
     this->Search(start, end);
 
     delete[] start;
@@ -151,7 +154,8 @@ ListeDeTrajet::ListeDeTrajet()
         cout << "Appel au constructeur de <ListeDeTrajet>" << endl;
     #endif
 
-    this->listTrajet = NULL;
+    listTrajet = NULL;
+    endList = NULL;
 }
 
 
@@ -162,6 +166,7 @@ ListeDeTrajet::~ListeDeTrajet ( )
     #ifdef MAP
         cout << "Appel au destructeur de <ListeDeTrajet>" << endl;
     #endif
+
     elem* current = this->listTrajet;
     elem* temp;
     while (current != NULL)
@@ -184,8 +189,17 @@ void ListeDeTrajet::Add(const Trajet * newTrajet)
 {
     elem* newElem = new elem;
     newElem->value = newTrajet;
-    newElem->next = this->listTrajet;
-    this->listTrajet = newElem;
+    newElem->next = NULL;
+    if (listTrajet == NULL)
+    {
+        listTrajet = newElem;
+        endList = newElem;
+    }
+    else
+    {
+        endList->next = newElem;
+        endList = newElem;
+    }
 }
 
 

@@ -33,21 +33,23 @@ int main()
         } else
         {
             cout << "Commande inconnue." << endl;
-            PrintMenu();
         }
+        PrintMenu();
     }
 
     delete[] command;
+    delete catalogue;
 
     return 0;
 }
 
 void PrintMenu()
 {
-    cout << "Liste des commandes :" << endl;
+    cout << endl << "Liste des commandes :" << endl;
     cout << "- add      : ajouter un trajet au catalogue" << endl;
     cout << "- print    : afficher tout le catalogue" << endl;
     cout << "- search   : chercher un trajet dans le catalogue" << endl;
     cout << "- bye      : quitter le programme" << endl;
+    cout << ">> ";
 }
 
