@@ -10,28 +10,25 @@ int main()
 {
     ListeDeTrajet* catalogue = new ListeDeTrajet();
 
-    char* command = "";
-
-
+    char* command = new char[100];
     PrintMenu();
-
-    
     while (true)
     {
         cin >> command;
 
         if (!strcmp(command, "add"))
         {
+            catalogue->AskNewTrajet();
 
         } else if (!strcmp(command, "print"))
         {
-
+            catalogue->Print();
         } else if (!strcmp(command, "search"))
         {
-
+            catalogue->AskSearch();
         } else if (!strcmp(command, "bye"))
         {
-            cout << "Au revoir !";
+            cout << "Au revoir !" << endl;
             break;
         } else
         {
@@ -39,6 +36,8 @@ int main()
             PrintMenu();
         }
     }
+
+    delete[] command;
 
     return 0;
 }
@@ -51,3 +50,4 @@ void PrintMenu()
     cout << "- search   : chercher un trajet dans le catalogue" << endl;
     cout << "- bye      : quitter le programme" << endl;
 }
+

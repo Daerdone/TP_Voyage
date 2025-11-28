@@ -27,11 +27,7 @@ class ListeDeTrajet
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    void Add (const Trajet * newTrajet);
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    
 
     void Print ( ) const;
     // Mode d'emploi :
@@ -39,11 +35,17 @@ public:
     // Contrat :
     //
 
-    void Search (const char* start, const char* end, ListeDeTrajet & result) const;
+    void AskNewTrajet();
     // Mode d'emploi :
     //      
     // Contrat :
-    // result est une ListeDeTrajet déjà allouée
+    // 
+
+    void AskSearch() const;
+    // Mode d'emploi :
+    //      
+    // Contrat :
+    // 
 
     const char* GetStart() const;
     // Mode d'emploi :
@@ -78,6 +80,23 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
+    void Add (const Trajet * newTrajet);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    void Search (const char* start, const char* end, ListeDeTrajet & result) const;
+    // Mode d'emploi :
+    //      
+    // Contrat :
+    // result est une ListeDeTrajet déjà allouée
+
+    TrajetSimple* AskNewTrajetSimple() const;
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
 //----------------------------------------------------- Attributs protégés
 
