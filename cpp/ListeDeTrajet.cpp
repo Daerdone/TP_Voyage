@@ -59,10 +59,8 @@ void ListeDeTrajet::AskNewTrajet()
                 break;
             }
 
-            if (trajetCompose)
-
             // On vérifie que la ville de départ du nouveau trajet est bien la ville d'arrivée du précédent
-            if (strcmp(start, trajetCompose->GetEnd()) != 0)
+            if (trajetCompose->GetEnd() != NULL && strcmp(start, trajetCompose->GetEnd()) != 0)
             {
                 cout << "Erreur : la ville de départ du nouveau trajet doit être la même que la ville d'arrivée du précédent." << endl;
                 cout << "Veuillez réessayer." << endl;
@@ -107,7 +105,7 @@ void ListeDeTrajet::AskSearch() const
     delete[] end;
 }
 
-void ListeDeTrajet::Print() const
+void ListeDeTrajet::Print(int indLvl) const
 // Algorithme :
 //
 {
@@ -117,6 +115,8 @@ void ListeDeTrajet::Print() const
     {
         if (current->value != NULL)
         {
+            for (int i = 0; i < indLvl; cout << "   ", i++) {}
+            cout << "- ";
             (current->value)->Print();
         }
         current = current->next;
@@ -196,15 +196,12 @@ void ListeDeTrajet::Search(const char* start, const char* end) const
     elem* current = this->listTrajet;
     while (current != NULL)
     {
-        cout << "1" << endl;
         if ((!strcmp(current->value->GetStart(), start))
             && (!strcmp(current->value->GetEnd(), end)))
         {
-            cout << "2" << endl;
             current->value->Print();
         }
 
-        cout << "3" << endl;
         current = current->next;
     }
 }

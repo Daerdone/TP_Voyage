@@ -20,7 +20,10 @@ void TrajetCompose::Print() const
 // Algorithme :
 //
 {
-    listeDeTrajet->Print();
+    cout << "TC : ";
+    Trajet::Print();
+    cout << endl;
+    listeDeTrajet->Print(2);
 }
 
 void TrajetCompose::AddTrajet(const char * start, const char * end, const char * moyenDeTransport)
@@ -29,7 +32,16 @@ void TrajetCompose::AddTrajet(const char * start, const char * end, const char *
 {
     TrajetSimple * trajet = new TrajetSimple(start, end, moyenDeTransport);
     
-    strcpy(this->end, start);
+    if (this->start == NULL)
+    {
+        this->start = new char[100];
+        strcpy(this->start, start);
+    }
+    if (this->end == NULL)
+    {
+        this->end = new char[100];
+    }
+    strcpy(this->end, end);
     listeDeTrajet->Add(trajet);
 }
 
@@ -43,7 +55,7 @@ TrajetCompose::TrajetCompose() : Trajet(NULL, NULL)
         cout << "Appel au constructeur de <TrajetCompose>" << endl;
     #endif
 
-    listeDeTrajet = new ListeDeTrajet;
+    listeDeTrajet = new ListeDeTrajet();
 }
 
 TrajetCompose::~TrajetCompose ( )

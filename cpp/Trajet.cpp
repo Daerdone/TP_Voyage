@@ -59,6 +59,14 @@ Trajet::Trajet (const char *startIn, const char *endIn)
     start = new char[100];
     end = new char[100];
 
-    strcpy(start, startIn);
-    strcpy(end, endIn);
+    if (startIn != NULL)
+    {
+        strcpy(start, startIn);
+        strcpy(end, endIn);
+    }
+    else
+    {
+        start = NULL;
+        end = NULL;
+    }
 }

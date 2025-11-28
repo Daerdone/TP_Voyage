@@ -22,7 +22,7 @@ int main()
 
         } else if (!strcmp(command, "print"))
         {
-            catalogue->Print();
+            catalogue->Print(1);
         } else if (!strcmp(command, "search"))
         {
             catalogue->AskSearch();

@@ -29,7 +29,7 @@ public:
 //----------------------------------------------------- Méthodes publiques
     
 
-    void Print ( ) const;
+    void Print (int indLvl) const;
     // Mode d'emploi :
     //
     // Contrat :

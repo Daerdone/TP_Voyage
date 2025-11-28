@@ -19,6 +19,7 @@ void TrajetSimple::Print() const
 // Algorithme :
 //
 {
+    cout << "TS : ";
     Trajet::Print();
     cout << " (" << moyenDeTransport << ")" << endl;
 }
