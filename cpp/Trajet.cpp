@@ -3,6 +3,7 @@
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <cstring>
 
 //------------------------------------------------------ Include personnel
 #include "Trajet.h"
@@ -15,7 +16,7 @@ using namespace std;
 
 void Trajet::Print ( ) const
 {
-    cout << "Trajet de " << start << " à " << end << endl;
+    cout << start << " -> " << end;
 } 
 
 const char * Trajet::GetStart ( ) const
@@ -39,7 +40,6 @@ Trajet::~Trajet ( )
     #ifdef MAP
         cout << "Appel au destructeur de <Trajet>" << endl;
     #endif
-
 } 
 
 
@@ -47,11 +47,13 @@ Trajet::~Trajet ( )
 
 //----------------------------------------------------- Méthodes protégées
 
-Trajet::Trajet (const char* start, const char*end) 
-    : start(start), end(end)
+Trajet::Trajet (const char *startIn, const char *endIn)
 {
     #ifdef MAP
         cout << "Appel au constructeur de <Trajet>" << endl;
     #endif
+
+    strcpy(start, startIn);
+    strcpy(end, endIn);
 }
 

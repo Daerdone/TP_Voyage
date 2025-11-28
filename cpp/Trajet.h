@@ -64,8 +64,8 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    const char* start; 
-    const char* end;
+    char* start; 
+    char* end;
 
 };
 

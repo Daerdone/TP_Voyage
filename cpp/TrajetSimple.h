@@ -33,11 +33,11 @@ public:
 //-------------------------------------------- Constructeurs - destructeur
 
 
-    TrajetSimple (char* start, char* end, char* moyenDeTransport);
+    TrajetSimple (const char* start, const char* end, const char* moyenDeTransport);
     // Mode d'emploi :
     // 
     // Contrat :
-    // Il faut que la ListeDeTrajet ldt soit valide, c'est à dire que chaque ville d'arrivée soit la ville de départ du trajet suivant.
+    //
 
     virtual ~TrajetSimple ( );
     // Mode d'emploi :
@@ -52,7 +52,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    const char* moyenDeTransport;
+    char* moyenDeTransport;
 };
 
 //-------------------------------- Autres définitions dépendantes de <TrajetSimple>

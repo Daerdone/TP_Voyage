@@ -10,11 +10,9 @@ int main()
 {
     ListeDeTrajet* catalogue = new ListeDeTrajet();
 
-    char* command = "";
-
+    char* command = new char[100];
 
     PrintMenu();
-
     
     while (true)
     {
