@@ -2,7 +2,7 @@
 #iChannel1 "self" // permet de lire les pixels de l'image précédente, pour y stocker la position et l'orientation de la caméra
 #iKeyboard
 
-const float Epsilon = 0.01;
+const float Epsilon = 0.005;
 
 const float minRenderDistance=1.0;
 const float maxRenderDistance=35.0; // = render distance
@@ -112,7 +112,7 @@ float Terrain(vec3 p, int nbOctaves)
 {
     float noiseValue = turbulence(p.xz, 2.5, 0.1, 0.46, nbOctaves);
 
-    float a = 0.1;
+    float a = 0.15;
     float b = -0.19;
     float c = 8.0;
     float d = 0.58;
@@ -121,7 +121,7 @@ float Terrain(vec3 p, int nbOctaves)
     {
         noiseValue = (noiseValue+a)*d*sqrt(abs(noiseValue+a))+b+(pow(noiseValue+a, 2.0)/(c));
     } else {
-        noiseValue = (noiseValue+a)*d*sqrt(abs(noiseValue+a))+b-(pow(noiseValue+a, 2.0)/(c-3.));
+        noiseValue = (noiseValue+a)*d*sqrt(abs(noiseValue+a))+b-(pow(noiseValue+a, 2.0)/(c-6.));
     }
 
     return noiseValue - p.y;
@@ -233,7 +233,7 @@ vec3 ShadeTerrain(vec3 p, vec3 n, vec3 animatedSunPos, bool isShadowed, float su
     float grassness = 0.2;
     float snowHeight = 1.9;
     float flatness = clamp(abs(dot(TerrainNormal(p, 3), vec3(0,1,0))) + grassness, 0.0, 1.0);
-    vec3 objectColor = mix(sandColor, grassColor, clamp(pow(p.y + 0.7 +0.1*Terrain(p+vec3(141, 0, 5937), 3), 5.0), 0.0, 1.0)); // sand
+    vec3 objectColor = mix(sandColor, grassColor, clamp(pow(p.y + 0.8 , 5.0), 0.0, 1.0)); // sand
     objectColor = mix(snowColor, objectColor, pow(clamp((snowHeight - p.y), 0.0, 1.0), 5.0)); // snow
     objectColor = mix(rockColor, objectColor, pow(flatness, rockSmoothness)); // rock
 
@@ -372,7 +372,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // Premier rayon pour déterminer les objets touchés
 
     bool isTerrain, isWater;
-    float distance = Raytrace(ro, rd, 170, minRenderDistance, maxRenderDistance, isTerrain, isWater);
+    float distance = Raytrace(ro, rd, 250, minRenderDistance, maxRenderDistance, isTerrain, isWater);
     vec3 pos = ro+distance*rd;
 
     // Deuxième rayon pour savoir si cette position est éclairée par le soleil
