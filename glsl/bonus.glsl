@@ -286,12 +286,6 @@ vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, vec3 animatedSunPos, bool castedShadow,
         vec3 terrainColor = ShadeTerrain(terrainPos, TerrainNormal(terrainPos, 1), animatedSunPos, false, 10.0);
         c = mix(c, terrainColor, 0.7);
     }
-    else
-    {
-        //c = mix(c, background(dir), 0.8);
-    }
-
-
 
     return c;
 }
