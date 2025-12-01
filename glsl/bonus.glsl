@@ -8,7 +8,7 @@ const float minRenderDistance=1.0;
 const float maxRenderDistance=35.0; // = render distance
 const float minShadowDistance=0.05;
 const float maxShadowDistance=10.0; // = max distance between an object and its shadow
-const float seaLevel = -0.2;
+const float seaLevel = -0.20;
 const float WaterSpeed = 0.18;
 vec3 sunPos = normalize(vec3(0, 3, 5));
 
@@ -279,6 +279,25 @@ vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, vec3 animatedSunPos, bool castedShadow,
 
     vec3 c = 0.9*diffuseColor + specularColor*specular;
 
+    // Reflection du terrain
+
+    n = mix(n, vec3(0, 1, 0), 0.90);
+    vec3 dir = reflect(rd, n);
+    bool hitTerrain, hitWater;
+    float dist = Raytrace(p, dir, 100, 0.01, 10.0, hitTerrain, hitWater);
+    vec3 terrainPos = p+dir*dist;
+    if (hitTerrain)
+    {
+        vec3 terrainColor = ShadeTerrain(terrainPos, TerrainNormal(terrainPos, 1), animatedSunPos, false, 10.0);
+        c = mix(c, terrainColor, 0.8);
+    }
+    else
+    {
+        //c = mix(c, background(dir), 0.8);
+    }
+
+
+
     return c;
 }
 
@@ -356,16 +375,8 @@ bool moveCamera(in vec2 fragCoord, out vec3 rd, out vec3 ro, out vec4 dataToStor
 
 // MAIN
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+vec3 getColor(vec3 ro, vec3 rd)
 {
-    vec3 rd, ro;
-    vec4 dataToStore;
-    
-    if (moveCamera(fragCoord, rd, ro, dataToStore)) {
-        fragColor = dataToStore;
-        return;
-    }
-
     vec3 backgroundColor = background(rd);
     vec3 rgb = backgroundColor;
 
@@ -406,6 +417,20 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         rgb += sunColor*f*f;
     }
 
-    fragColor=vec4(rgb, 1.0);
+    return rgb;
+}
+
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec3 rd, ro;
+    vec4 dataToStore;
+    
+    if (moveCamera(fragCoord, rd, ro, dataToStore)) {
+        fragColor = dataToStore;
+        return;
+    }
+
+    fragColor = vec4(getColor(ro, rd), 1.0);
 }
 
