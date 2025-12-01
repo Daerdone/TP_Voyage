@@ -112,7 +112,8 @@ float WaterTurbulence(in vec2 p, in float amplitude, in float fbase, in float at
 float Terrain(vec3 p, int nbOctaves)
 {
     float noiseValue = turbulence(p.xz, 2.5, 0.1, 0.46, nbOctaves);
-    
+
+
     return noiseValue - p.y;
 }
 
@@ -125,15 +126,15 @@ float Water(vec3 p)
     return noiseValue + seaLevel - p.y;
 }
 
-// p : point
 vec3 TerrainNormal(in vec3 p )
 {
     float eps = 0.0001;
     vec3 n;
-    float v = Terrain(p, 8);
-    n.x = Terrain( vec3(p.x+eps, p.y, p.z), 8 ) - v;
-    n.y = Terrain( vec3(p.x, p.y+eps, p.z), 8 ) - v;
-    n.z = Terrain( vec3(p.x, p.y, p.z+eps), 8 ) - v;
+    int octaves = 8;
+    float v = Terrain(p, octaves);
+    n.x = Terrain( vec3(p.x+eps, p.y, p.z), octaves ) - v;
+    n.y = Terrain( vec3(p.x, p.y+eps, p.z), octaves ) - v;
+    n.z = Terrain( vec3(p.x, p.y, p.z+eps), octaves ) - v;
     return normalize(n);
 }
 
@@ -232,7 +233,10 @@ vec3 ShadeTerrain(vec3 p, vec3 n, vec3 animatedSunPos, bool isShadowed, float su
 vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, vec3 animatedSunPos, bool castedShadow, float sunDistance)
 {
     const vec3 sunColor = vec3(1, 1, 1);
-    vec3 objectColor = vec3(0.5, 0.7, .9);
+
+    float terrainHeight = Terrain(p, 2);
+    float depth = clamp(p.y - terrainHeight, 0.0, 1.0);
+    vec3 objectColor = mix(vec3(0.5, 0.7, .9), vec3(0.0), depth*0.4);
 
     // Specular
     vec3 viewDir = normalize(-rd);
@@ -267,10 +271,11 @@ bool moveCamera(in vec2 fragCoord, out vec3 rd, out vec3 ro, out vec4 dataToStor
     float pitch = stored2.x;
     vec3 prevMouse = stored2.yzw;
 
+    // POSITION PAR DEFAUT DE LA CAMERA
     if (iFrame == 0) {
-        camPos = vec3(0.0, 5.0, 5.0);
+        camPos = vec3(50.0, 30.0, 0);
         yaw = 0.0;
-        pitch = 0.0;
+        pitch = -3.14/2.0;
         prevMouse = vec3(0.0);
     }
 
