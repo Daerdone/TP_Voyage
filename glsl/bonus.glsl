@@ -236,7 +236,7 @@ vec3 ShadeWater(vec3 p, vec3 n, vec3 rd, vec3 animatedSunPos, bool castedShadow,
 
     float terrainHeight = Terrain(p, 2);
     float depth = clamp(p.y - terrainHeight, 0.0, 1.0);
-    vec3 objectColor = mix(vec3(0.5, 0.7, .9), vec3(0.0), depth*0.4);
+    vec3 objectColor = 0.8*mix(vec3(0.5, 0.7, .9), vec3(0.0), depth*0.25);
 
     // Specular
     vec3 viewDir = normalize(-rd);
