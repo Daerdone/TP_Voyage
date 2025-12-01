@@ -112,6 +112,18 @@ float Terrain(vec3 p, int nbOctaves)
 {
     float noiseValue = turbulence(p.xz, 2.5, 0.1, 0.46, nbOctaves);
 
+    float a = 0.1;
+    float b = -0.19;
+    float c = 8.0;
+    float d = 0.58;
+
+    if (noiseValue > -a)
+    {
+        noiseValue = (noiseValue+a)*d*sqrt(abs(noiseValue+a))+b+(pow(noiseValue+a, 2.0)/(c));
+    } else {
+        noiseValue = (noiseValue+a)*d*sqrt(abs(noiseValue+a))+b-(pow(noiseValue+a, 2.0)/(c-3.));
+    }
+
     return noiseValue - p.y;
 }
 
@@ -186,7 +198,7 @@ float Raytrace(vec3 o, vec3 u, int maxRaySteps, float minDistance, float maxDist
         }
        
         // Move along ray
-        t += max(Epsilon, min(-vTerrain, -vWater)/2.0);  
+        t += max(Epsilon, min(-vTerrain, -vWater)/2.5);  
 
         // Escape marched far away
         if (t>maxDistance)
@@ -356,7 +368,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     bool isShadowedByTerrain, isShadowedByWater;
     vec3 animatedSunPos = normalize(rotateY(sunPos, iTime*0.06));
-    float sunDistance = Raytrace(pos, animatedSunPos, 70, minShadowDistance, maxShadowDistance, isShadowedByTerrain, isShadowedByWater);
+    float sunDistance = Raytrace(pos, animatedSunPos, 100, minShadowDistance, maxShadowDistance, isShadowedByTerrain, isShadowedByWater);
     bool isShadowed = isShadowedByTerrain || isShadowedByWater;    
     if (isTerrain || isWater)
     {   

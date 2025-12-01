@@ -1,14 +1,14 @@
 A FAIRE PENDANT LE PROCHAIN TP :
 
-- donner des couleurs différentes en fonction de la normale ? 🔴
+- donner des couleurs différentes en fonction de la normale (roche) ? 🔴
 - neige à une certaine altitude ET avec un noise pour randomiser un peu
 - fonction pour faire des plages
 
 
-- faire une fonction turbulance à part pour l'eau : 👌
+- faire une fonction turbulence à part pour l'eau : 👌
     -> faire en sorte que chaque octave bouge à une vitesse différente👌
     -> essayer l'effet wind waker avec une ligne à une certaine hauteur👌
-- joli ciel (nuages ?) (CIELEUH 🎇) 
+- joli ciel (nuages ?) (CIELEUH 🎇)
 - soleil visible dans le ciel👌
 - faire en sorte qu'on puisse bouger la caméra comme dans un FPS👌
 - ombre portée : raycast qui part du point du terrain une fois qu'on la trouvé avec le premier raycast et qui part en direction de la caméra. Il peut lui aussi compter le temps passé dans les nuages et appliquer une ombre aux nuages 👌
