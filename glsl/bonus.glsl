@@ -124,11 +124,10 @@ float Water(vec3 p)
     return noiseValue + seaLevel - p.y;
 }
 
-vec3 TerrainNormal(in vec3 p )
+vec3 TerrainNormal(in vec3 p, int octaves)
 {
     float eps = 0.0001;
     vec3 n;
-    int octaves = 8;
     float v = Terrain(p, octaves);
     n.x = Terrain( vec3(p.x+eps, p.y, p.z), octaves ) - v;
     n.y = Terrain( vec3(p.x, p.y+eps, p.z), octaves ) - v;
@@ -212,7 +211,19 @@ vec3 ShadeTerrain(vec3 p, vec3 n, vec3 animatedSunPos, bool isShadowed, float su
     // point light
     const vec3 lightColor = vec3(1.0, 1.0, 1.0);
     
-    vec3 objectColor = mix(vec3(0.6, 0.6, 0.1), vec3(0.05, 0.6, 0.05), p.y);
+    const vec3 grassColor = vec3(0.05, 0.6, 0.05);
+    const vec3 sandColor = vec3(0.85, 0.8, 0.5);
+    const vec3 rockColor = vec3(0.42, 0.40, 0.29);
+    const vec3 snowColor = vec3(0.9, 0.9, 0.9);
+
+    // ROCHE ET SABLE ET SNOW
+    float rockSmoothness = 10.0;
+    float grassness = 0.2;
+    float snowHeight = 1.7;
+    float flatness = clamp(abs(dot(TerrainNormal(p, 3), vec3(0,1,0))) + grassness, 0.0, 1.0);
+    vec3 objectColor = mix(sandColor, grassColor, clamp(pow(p.y + 0.7 +0.1*Terrain(p+vec3(141, 0, 5937), 3), 5.0), 0.0, 1.0)); // sand
+    objectColor = mix(snowColor, objectColor, pow(clamp((snowHeight - p.y), 0.0, 1.0), 5.0)); // snow
+    objectColor = mix(rockColor, objectColor, pow(flatness, rockSmoothness)); // rock
 
     float dotP = dot(-n, animatedSunPos);
 
@@ -223,7 +234,7 @@ vec3 ShadeTerrain(vec3 p, vec3 n, vec3 animatedSunPos, bool isShadowed, float su
     }
     else // Lumiere
     {
-        c = lightColor*mix(objectColor*0.5, (0.1 + 1.2*objectColor), dotP);
+        c = lightColor*mix(objectColor*0.5, 0.1+1.2*objectColor, dotP);
     }
     return c;
 }
@@ -362,7 +373,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     {   
         if (isTerrain)
         {
-            vec3 n = TerrainNormal(pos);
+            vec3 n = TerrainNormal(pos, 8);
             rgb = ShadeTerrain(pos, n, animatedSunPos, isShadowed, sunDistance);
         }
         else if (isWater)
