@@ -9,9 +9,9 @@
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Rôle de la classe <Trajet>
-//
-//
+// Rôle de la classe <Trajet> :
+// Classe abstraite servant pour construire des trajets simples et complexes,
+// en définissant les méthodes et arguments de base.
 //------------------------------------------------------------------------
 
 class Trajet
@@ -22,20 +22,20 @@ public:
 //----------------------------------------------------- Méthodes publiques
 
     virtual void Print() const;
-    // Mode d'emploi (constructeur de copie) :
-    //
+    // Mode d'emploi :
+    // 		Affiche la ville de départ et d'arrivée du trajet.
     // Contrat :
     //
 
     const char* GetStart() const;
-    // Mode d'emploi (constructeur de copie) :
-    //
+    // Mode d'emploi :
+    //		Renvoie la ville de départ du trajet.
     // Contrat :
     //
 
     const char* GetEnd() const;
-    // Mode d'emploi (constructeur de copie) :
-    //
+    // Mode d'emploi :
+    //		Renvoie la ville d'arrivée du trajet.
     // Contrat :
     //
 
@@ -46,7 +46,7 @@ public:
 
     virtual ~Trajet ( );
     // Mode d'emploi :
-    //
+    //		Libère les espaces alloués à start et end.
     // Contrat :
     //
 
@@ -58,18 +58,22 @@ protected:
 
     Trajet (const char* start, const char* end);
     // Mode d'emploi :
-    //
-    // Contrat :
+    //		start -> Ville de départ du trajet (peut-être NULL)
+	// 		end -> Ville d'arrivée du trajet (peut-être NULL)
+	// 
+	// 		Alloue de la mémoire pour les attributs start et end
+	//		et les initialise avec les attributs en paramètre.
+	// Contrat :
     //
 
 //----------------------------------------------------- Attributs protégés
 
-    char* start; 
-    char* end;
+    char* start; // Ville de départ du trajet
+    char* end; // Ville de fin du trajet
 
 };
 
 //-------------------------------- Autres définitions dépendantes de <Trajet>
 
-#endif // Trajet_H
+#endif
 

@@ -15,16 +15,22 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 
 void Trajet::Print ( ) const
+// Algorithme :
+//
 {
     cout << start << " -> " << end;
 } 
 
 const char * Trajet::GetStart ( ) const
+// Algorithme :
+//
 {
     return start;
 } 
 
 const char * Trajet::GetEnd ( ) const
+// Algorithme :
+//
 {
     return end;
 } 
@@ -51,6 +57,8 @@ Trajet::~Trajet ( )
 //----------------------------------------------------- Méthodes protégées
 
 Trajet::Trajet (const char *startIn, const char *endIn)
+// Algorithme :
+//
 {
     #ifdef MAP
         cout << "Appel au constructeur de <Trajet>" << endl;
