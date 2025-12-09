@@ -23,7 +23,7 @@ void ListeDeTrajet::AskNewTrajet()
 {
 
     cout << endl << "Voulez vous créer un trajet simple (s) ou composé ? (c)" << endl;
-    cout << ">>";
+    cout << ">> ";
     char type;
     cin >> type;
 

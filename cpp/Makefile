@@ -1,17 +1,27 @@
-main : main.o Trajet.o TrajetSimple.o TrajetCompose.o ListeDeTrajet.o
-	g++ -o main main.o Trajet.o TrajetSimple.o TrajetCompose.o ListeDeTrajet.o
+CXXFLAGS = -ansi -pedantic -Wall -std=c++11
 
-main.o : main.cpp ListeDeTrajet.h
-	g++ main.cpp -c main.o -ansi -pedantic -Wall -std=c++11
+.PHONY: clean MAP
 
-Trajet.o : Trajet.cpp Trajet.h
-	g++ Trajet.cpp -c Trajet.o -ansi -pedantic -Wall -std=c++11
+main: clean main.o Trajet.o TrajetSimple.o TrajetCompose.o ListeDeTrajet.o
+	g++ -o trajets main.o Trajet.o TrajetSimple.o TrajetCompose.o ListeDeTrajet.o
 
-TrajetSimple.o : TrajetSimple.cpp TrajetSimple.h Trajet.h ListeDeTrajet.h
-	g++ TrajetSimple.cpp -c TrajetSimple.o -ansi -pedantic -Wall -std=c++11
+MAP: CXXFLAGS += -DMAP
+MAP: clean main
 
-TrajetCompose.o : TrajetCompose.cpp TrajetCompose.h Trajet.h ListeDeTrajet.h
-	g++ TrajetCompose.cpp -c TrajetCompose.o -ansi -pedantic -Wall -std=c++11
+main.o: main.cpp ListeDeTrajet.h
+	g++ -c main.cpp -o main.o $(CXXFLAGS)
 
-ListeDeTrajet.o : ListeDeTrajet.cpp ListeDeTrajet.h Trajet.h
-	g++ ListeDeTrajet.cpp -c ListeDeTrajet.o -ansi -pedantic -Wall -std=c++11
+Trajet.o: Trajet.cpp Trajet.h
+	g++ -c Trajet.cpp -o Trajet.o $(CXXFLAGS)
+
+TrajetSimple.o: TrajetSimple.cpp TrajetSimple.h Trajet.h ListeDeTrajet.h
+	g++ -c TrajetSimple.cpp -o TrajetSimple.o $(CXXFLAGS)
+
+TrajetCompose.o: TrajetCompose.cpp TrajetCompose.h Trajet.h ListeDeTrajet.h
+	g++ -c TrajetCompose.cpp -o TrajetCompose.o $(CXXFLAGS)
+
+ListeDeTrajet.o: ListeDeTrajet.cpp ListeDeTrajet.h Trajet.h
+	g++ -c ListeDeTrajet.cpp -o ListeDeTrajet.o $(CXXFLAGS)
+
+clean:
+	rm -f *.o trajets
