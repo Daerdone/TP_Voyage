@@ -64,9 +64,6 @@ Trajet::Trajet ()
         cout << "Appel au constructeur de <Trajet>" << endl;
     #endif
 
-	start = new char[100];
-    end = new char[100];
-
 	start = NULL;
 	end = NULL;
 }

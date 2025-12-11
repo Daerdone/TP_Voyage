@@ -8,37 +8,38 @@ void PrintMenu();
 
 int main()
 {
-    ListeDeTrajet* catalogue = new ListeDeTrajet();
+    ListeDeTrajet catalogue = ListeDeTrajet();
 
-    char* command = new char[100];
+    char command[100];
     PrintMenu();
+
     while (true)
     {
+        cout << ">> ";
         cin >> command;
 
         if (!strcmp(command, "add"))
         {
-            catalogue->AskNewTrajet();
+            catalogue.AskNewTrajet();
 
         } else if (!strcmp(command, "print"))
         {
-            catalogue->Print(1);
+            catalogue.Print(1);
         } else if (!strcmp(command, "search"))
         {
-            catalogue->AskSearch();
+            catalogue.AskSearch();
         } else if (!strcmp(command, "bye"))
         {
             cout << "Au revoir !" << endl;
             break;
+        } else if (!strcmp(command, "help"))
+        {
+            PrintMenu();
         } else
         {
-            cout << "Commande inconnue." << endl;
+            cout << "Commande inconnue (\"" << command << "\"). Tapez \"help\" pour afficher la liste des commandes." << endl;
         }
-        PrintMenu();
     }
-
-    delete[] command;
-    delete catalogue;
 
     return 0;
 }
@@ -49,7 +50,7 @@ void PrintMenu()
     cout << "- add      : ajouter un trajet au catalogue" << endl;
     cout << "- print    : afficher tout le catalogue" << endl;
     cout << "- search   : chercher un trajet dans le catalogue" << endl;
-    cout << "- bye      : quitter le programme" << endl;
-    cout << ">> ";
+    cout << "- help     : afficher ce menu" << endl;
+    cout << "- bye      : quitter le programme" << endl << endl;
 }
 

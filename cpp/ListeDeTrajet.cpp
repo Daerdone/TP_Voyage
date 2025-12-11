@@ -27,9 +27,9 @@ void ListeDeTrajet::AskNewTrajet()
     char type;
     cin >> type;
 
-    char* start = new char[100];
-    char* end = new char[100];
-    char* transport = new char[100];
+    char start[100];
+    char end[100];
+    char transport[100];
     
     if (type == 's')
     {
@@ -43,6 +43,7 @@ void ListeDeTrajet::AskNewTrajet()
 
         TrajetSimple* newTrajet = new TrajetSimple(start, end, transport);
         Add(newTrajet);
+
         
     }
     else if (type == 'c')
@@ -65,7 +66,7 @@ void ListeDeTrajet::AskNewTrajet()
             if (trajetCompose->GetEnd() != NULL && strcmp(start, trajetCompose->GetEnd()) != 0)
             {
                 cout << "Erreur : la ville de départ du nouveau trajet doit être la même que la ville d'arrivée du précédent." << endl;
-                cout << "Veuillez réessayer." << endl;
+                cout << "Veuillez réessayer ou taper 'stop' pour arrêter." << endl;
                 continue;
             }
 
@@ -76,18 +77,19 @@ void ListeDeTrajet::AskNewTrajet()
 
             trajetCompose->AddTrajet(start, end, transport);
 
-            cout << "Entrez 'stop' pour terminer ou un autre trajet pour continuer." << endl;
+            cout << endl << "Entrez 'stop' pour terminer ou un autre trajet pour continuer." << endl;
         }
         
         if (trajetCompose->GetEnd() != NULL)
         {
             Add(trajetCompose);
+            cout << "Trajet ajouté au catalogue." << endl;
+        }
+        else
+        {
+            cout << "Erreur lors de l'ajout du trajet au catalogue." << endl;
         }
     }
-
-    delete[] start;
-    delete[] end;
-    delete[] transport;
 }
 
 void ListeDeTrajet::AskSearch() const
