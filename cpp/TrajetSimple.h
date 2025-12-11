@@ -75,7 +75,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    char* moyenDeTransport; //Moyen de transport utilisé lors du trajet.
+    char* moyenDeTransport; // Moyen de transport utilisé lors du trajet.
 };
 
 //-------------------------------- Autres définitions dépendantes de <TrajetSimple>

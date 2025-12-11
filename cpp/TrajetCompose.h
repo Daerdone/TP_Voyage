@@ -36,6 +36,7 @@ public:
     // Mode d'emploi :
     //		Crée un TrajetSimple et l'ajoute à la liste de trajets
 	//		composant notre TrajetCompose.
+    //      Met à jour les attributs start et end si nécessaire.
     // Contrat d'efficacité :
     //      Il faut que le trajet soit valide, c'est à dire que chaque
     //      ville de départ soit la ville d'arrivée du trajet précédent.
@@ -64,7 +65,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    ListeDeTrajet *listeDeTrajet; // Liste des trajets composant le TrajetCompose
+    ListeDeTrajet *listeDeTrajet; // Liste des trajets simples composant le TrajetCompose
 };
 
 //-------------------------------- Autres définitions dépendantes de <TrajetCompose>

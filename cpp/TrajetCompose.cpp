@@ -28,6 +28,10 @@ void TrajetCompose::Print() const
 
 void TrajetCompose::AddTrajet(const char * start, const char * end, const char * moyenDeTransport)
 // Algorithme :
+// Si la ville de départ du TrajetCompose n'est pas encore définie,
+// on la définit avec la ville de départ du premier TrajetSimple ajouté.
+// De même pour la ville d'arrivée.
+// Dans tous les cas, on met à jour la ville d'arrivée avec celle du dernier TrajetSimple ajouté.
 //
 {
     TrajetSimple * trajet = new TrajetSimple(start, end, moyenDeTransport);

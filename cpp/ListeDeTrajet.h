@@ -17,7 +17,7 @@ typedef struct elem {
 
 //------------------------------------------------------------------------
 // Rôle de la classe <ListeDeTrajet>
-//      Classe représentant une liste chaînée de trajets.
+//      Classe représentant une liste de trajets.
 //      Permet d'ajouter des trajets, d'afficher la liste,
 //      et de rechercher des trajets entre deux villes.
 //------------------------------------------------------------------------
@@ -35,7 +35,7 @@ public:
     //
     //      Affiche la liste des trajets avec un niveau d'indentation donné.
     // Contrat :
-    //
+    //      
 
     void AskNewTrajet();
     // Mode d'emploi :
@@ -53,14 +53,12 @@ public:
     const char* GetStart() const;
     // Mode d'emploi :
     //      Retourne la ville de départ du premier trajet de la liste.
-    // Contrat d'efficacité :
-    //      La liste n'est pas vide.
+    //      Si la liste est vide, retourne NULL.
 
     const char* GetEnd() const;
     // Mode d'emploi :
     //      Retourne la ville d'arrivée du dernier trajet de la liste.
-    // Contrat d'efficacité :
-    //      La liste n'est pas vide.
+    //      Si la liste est vide, retourne NULL.
 
     void Add (const Trajet * newTrajet);
     // Mode d'emploi :
@@ -89,7 +87,7 @@ protected:
 //----------------------------------------------------- Méthodes protégées
     void Search (const char* start, const char* end) const;
     // Mode d'emploi :
-    //      Recherche des trajets entre deux villes données.
+    //      Recherche des trajets entre deux villes données et les affiche.
     // Contrat :
     //
 

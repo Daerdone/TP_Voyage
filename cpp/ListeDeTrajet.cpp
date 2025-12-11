@@ -140,6 +140,25 @@ const char* ListeDeTrajet::GetEnd() const
     return endList->value->GetEnd();
 }
     
+void ListeDeTrajet::Add(const Trajet * newTrajet)
+// Algorithme :
+//
+{
+    elem* newElem = new elem;
+    newElem->value = newTrajet;
+    newElem->next = NULL;
+    if (listTrajet == NULL)
+    {
+        listTrajet = newElem;
+        endList = newElem;
+    }
+    else
+    {
+        endList->next = newElem;
+        endList = newElem;
+    }
+}
+
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
@@ -174,24 +193,6 @@ ListeDeTrajet::~ListeDeTrajet ( )
     }
 }
 
-void ListeDeTrajet::Add(const Trajet * newTrajet)
-// Algorithme :
-//
-{
-    elem* newElem = new elem;
-    newElem->value = newTrajet;
-    newElem->next = NULL;
-    if (listTrajet == NULL)
-    {
-        listTrajet = newElem;
-        endList = newElem;
-    }
-    else
-    {
-        endList->next = newElem;
-        endList = newElem;
-    }
-}
 
 //------------------------------------------------------------------ PRIVE
 
