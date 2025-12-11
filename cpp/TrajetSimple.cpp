@@ -29,6 +29,8 @@ void TrajetSimple::Print() const
 //-------------------------------------------- Constructeurs - destructeur
 
 TrajetSimple::TrajetSimple(const char* start, const char* end, const char* Transport) : Trajet(start, end)
+// Algorithme :
+//
 {
     #ifdef MAP
         cout << "Appel au constructeur de <TrajetSimple>" << endl;
@@ -38,7 +40,6 @@ TrajetSimple::TrajetSimple(const char* start, const char* end, const char* Trans
 
     strcpy(moyenDeTransport, Transport);
 }
-
 
 TrajetSimple::~TrajetSimple ( )
 // Algorithme :
@@ -50,7 +51,6 @@ TrajetSimple::~TrajetSimple ( )
 
     delete [] moyenDeTransport;
 }
-
 
 //------------------------------------------------------------------ PRIVE
 

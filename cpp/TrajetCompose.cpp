@@ -49,7 +49,7 @@ void TrajetCompose::AddTrajet(const char * start, const char * end, const char *
 
 //-------------------------------------------- Constructeurs - destructeur
 
-TrajetCompose::TrajetCompose() : Trajet(NULL, NULL)
+TrajetCompose::TrajetCompose() : Trajet()
 {
     #ifdef MAP
         cout << "Appel au constructeur de <TrajetCompose>" << endl;
@@ -58,7 +58,7 @@ TrajetCompose::TrajetCompose() : Trajet(NULL, NULL)
     listeDeTrajet = new ListeDeTrajet();
 }
 
-TrajetCompose::~TrajetCompose ( )
+TrajetCompose::~TrajetCompose()
 // Algorithme :
 //
 {

@@ -10,8 +10,8 @@
 
 //------------------------------------------------------------------------
 // Rôle de la classe <Trajet> :
-// Classe abstraite servant pour construire des trajets simples et complexes,
-// en définissant les méthodes et arguments de base.
+//      Classe abstraite servant de brique de base pour construire les trajets simples et complexes,
+//      en définissant les méthodes et arguments de base.
 //------------------------------------------------------------------------
 
 class Trajet
@@ -23,7 +23,7 @@ public:
 
     virtual void Print() const;
     // Mode d'emploi :
-    // 		Affiche la ville de départ et d'arrivée du trajet.
+    // 		Affiche dans le terminal la ville de départ et d'arrivée du trajet.
     // Contrat :
     //
 
@@ -56,13 +56,22 @@ protected:
 
 //----------------------------------------------------- Méthodes protégées
 
+    // Les constructeurs sont protégées car la classe doit être abstraite.
+
     Trajet (const char* start, const char* end);
     // Mode d'emploi :
-    //		start -> Ville de départ du trajet (peut-être NULL)
-	// 		end -> Ville d'arrivée du trajet (peut-être NULL)
+    //		start -> Ville de départ du trajet
+	// 		end -> Ville d'arrivée du trajet
 	// 
 	// 		Alloue de la mémoire pour les attributs start et end
 	//		et les initialise avec les données en paramètre.
+	// Contrat d'efficacité :
+    //      Les pointeurs start et end ne sont pas NULL.
+
+    Trajet ();
+    // Mode d'emploi :
+	// 		Alloue de la mémoire pour les attributs start et end
+	//		et les initialise à NULL.
 	// Contrat :
     //
 
@@ -76,4 +85,3 @@ protected:
 //-------------------------------- Autres définitions dépendantes de <Trajet>
 
 #endif
-

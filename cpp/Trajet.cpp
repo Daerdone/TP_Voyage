@@ -56,6 +56,21 @@ Trajet::~Trajet ( )
 
 //----------------------------------------------------- Méthodes protégées
 
+Trajet::Trajet ()
+// Algorithme :
+//
+{
+	#ifdef MAP
+        cout << "Appel au constructeur de <Trajet>" << endl;
+    #endif
+
+	start = new char[100];
+    end = new char[100];
+
+	start = NULL;
+	end = NULL;
+}
+
 Trajet::Trajet (const char *startIn, const char *endIn)
 // Algorithme :
 //
@@ -67,14 +82,6 @@ Trajet::Trajet (const char *startIn, const char *endIn)
     start = new char[100];
     end = new char[100];
 
-    if (startIn != NULL)
-    {
-        strcpy(start, startIn);
-        strcpy(end, endIn);
-    }
-    else
-    {
-        start = NULL;
-        end = NULL;
-    }
+	strcpy(start, startIn);
+	strcpy(end, endIn);
 }

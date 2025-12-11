@@ -13,8 +13,10 @@
 
 //------------------------------------------------------------------------
 // Rôle de la classe <TrajetSimple>
-//
-//
+//      -> Hérite de la classe Trajet.
+//      Implemente le fonctionnement d'un trajet simple.
+//      Un trajet simple possède une ville de départ et une d'arrivée
+//      ainsi qu'un moyen de transport.
 //------------------------------------------------------------------------
 
 class TrajetSimple : public Trajet
@@ -25,8 +27,10 @@ public:
 //----------------------------------------------------- Méthodes publiques
     void Print() const;
     // Mode d'emploi :
-    
+    //      Affiche à l'utilisateurs les informations du TrajetSimple.
+    //      (Ville d'arrivée, de départ et moyen de transport)
     // Contrat :
+    //
 
 //------------------------------------------------- Surcharge d'opérateurs
 
@@ -35,13 +39,18 @@ public:
 
     TrajetSimple (const char* start, const char* end, const char* moyenDeTransport);
     // Mode d'emploi :
-    // 
-    // Contrat :
+    //		start -> Ville de départ du trajet
+	// 		end -> Ville d'arrivée du trajet
+    //      moyenDeTransport -> Moyen de transport utilisé pour le trajet.
     //
+    //      Construit un TrajetSimple en copiant les chaînes de caractères
+    //      passées en paramètre.
+    // Contrat d'efficacité :
+    //      Les paramètres start, end et moyenDeTransport ne sont pas NULL
 
     virtual ~TrajetSimple ( );
     // Mode d'emploi :
-    //
+    //      Libère l'espace de la classe.
     // Contrat :
     //
 
@@ -52,7 +61,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    char* moyenDeTransport;
+    char* moyenDeTransport; //Moyen de transport utilisé lors du trajet.
 };
 
 //-------------------------------- Autres définitions dépendantes de <TrajetSimple>
