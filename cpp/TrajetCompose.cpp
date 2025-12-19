@@ -26,6 +26,13 @@ void TrajetCompose::Print() const
     listeDeTrajet->Print(2);
 }
 
+int TrajetCompose::GetNbrSubTrajets() const
+// Algorithme :
+//
+{
+    return listeDeTrajet->GetNbrTrajet();
+}
+
 void TrajetCompose::AddTrajet(const char * start, const char * end, const char * moyenDeTransport)
 // Algorithme :
 // Si la ville de départ du TrajetCompose n'est pas encore définie,
@@ -49,11 +56,18 @@ void TrajetCompose::AddTrajet(const char * start, const char * end, const char *
     listeDeTrajet->Add(trajet);
 }
 
+void TrajetCompose::WriteInOfstream(ofstream & file) const
+// Algorithme :
+// Écrit dans le flux file les informations du TrajetCompose
+// selon le format défini dans modele_fichier.
+{
+    listeDeTrajet->WriteInOfstream(file);
+}
+
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
-
-TrajetCompose::TrajetCompose() : Trajet()
+TrajetCompose::TrajetCompose() : Trajet(1)
 {
     #ifdef MAP
         cout << "Appel au constructeur de <TrajetCompose>" << endl;

@@ -41,6 +41,12 @@ public:
     // Contrat :
     //
 
+    int GetType() const;
+    // Mode d'emploi :
+    //		Renvoie le type du trajet (simple ou composé).
+    // Contrat :
+    //
+
 //------------------------------------------------- Surcharge d'opérateurs
 
 
@@ -60,7 +66,7 @@ protected:
 
     // Les constructeurs sont protégées car la classe doit être abstraite.
 
-    Trajet (const char* start, const char* end);
+    Trajet (const char* start, const char* end, int type);
     // Mode d'emploi :
     //		start -> Ville de départ du trajet
 	// 		end -> Ville d'arrivée du trajet
@@ -70,7 +76,7 @@ protected:
 	// Contrat d'efficacité :
     //      Les pointeurs start et end ne sont pas NULL.
 
-    Trajet ();
+    Trajet (int type);
     // Mode d'emploi :
 	//		Initialise start et end à NULL.
 	// Contrat :
@@ -80,7 +86,7 @@ protected:
 
     char* start; // Ville de départ du trajet
     char* end; // Ville de fin du trajet
-
+    int typeTrajet; // Type du trajet (simple ou composé)
 };
 
 //-------------------------------- Autres définitions dépendantes de <Trajet>

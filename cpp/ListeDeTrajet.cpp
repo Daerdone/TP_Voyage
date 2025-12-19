@@ -7,6 +7,7 @@ using namespace std;
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <fstream>
 
 //------------------------------------------------------ Include personnel
 #include "ListeDeTrajet.h"
@@ -127,11 +128,17 @@ void ListeDeTrajet::AskSave() const
     string filename;
     string criteria;
 
+    if (nbrTrajet == 0)
+    {
+        cout << "Le catalogue est vide. Rien à sauvegarder. Retour au menu." << endl;
+        return;
+    }
+
     cout << endl << "Sauvegarde du catalogue :" << endl;
     cout << ">> Entrez le nom du fichier : ";
     cin >> filename;
 
-    cout << "Critères de sélection (a/s/c) : " << endl;
+    cout << endl << "Critères de sélection (a/s/c) : " << endl;
     cout << "- *a : tous les trajets" << endl;
     cout << "- *s : trajets simples uniquement" << endl;
     cout << "- *c : trajets composés uniquement" << endl;
@@ -177,6 +184,72 @@ void ListeDeTrajet::AskSave() const
     }
 }
 
+void ListeDeTrajet::SaveToFile(const string & filename, const char & criteria) const
+// Algorithme :
+//
+{
+    ofstream file(filename);
+    if (!file.is_open())
+    {
+        cout << "Erreur lors de l'ouverture du fichier. Retour au menu." << endl;
+    }
+    else
+    {
+        file << nbrTrajet << endl;
+        elem* current = this->listTrajet;
+        while (current != NULL)
+        {
+            if (current->value->GetType() == 0 && (criteria == 'a' || criteria == 's'))
+            {
+                const TrajetSimple* trajetS = dynamic_cast <const TrajetSimple*> (current->value);
+                file << "0," << trajetS->GetStart() << "," << trajetS->GetEnd() << "," << trajetS->GetMoyenDeTransport() << endl;
+            }
+            else if (current->value->GetType() == 1 && (criteria == 'a' || criteria == 'c'))
+            {
+                const TrajetCompose* trajetC = dynamic_cast <const TrajetCompose*> (current->value);
+                
+                trajetC->WriteInOfstream(file);
+            }
+            current = current->next;
+        }
+
+        file.close();
+        cout << "Catalogue sauvegardé dans " << filename << " selon le critère '" << criteria << "'." << endl;
+    }
+}
+
+void ListeDeTrajet::SaveToFile(const string & filename, int indice_deb, int indice_fin) const
+// Algorithme :
+//
+{
+    cout << "Fonctionnalité non implémentée pour l'instant." << endl;
+}
+
+void ListeDeTrajet::SaveToFile(const string & filename, const string & startCity, const string & endCity) const
+{
+    cout << "Fonctionnalité non implémentée pour l'instant." << endl;
+}
+
+void ListeDeTrajet::WriteInOfstream(ofstream & file) const
+// Algorithme :
+//
+{
+    elem* current = this->listTrajet;
+
+    file << nbrTrajet << ",";
+    const TrajetSimple* trajetS = dynamic_cast <const TrajetSimple*> (current->value);
+    file << trajetS->GetStart() << "," << trajetS->GetEnd() << "," << trajetS->GetMoyenDeTransport();
+    current = current->next;
+
+    while (current != NULL)
+    {
+        const TrajetSimple* trajetS = dynamic_cast <const TrajetSimple*> (current->value);
+        file << "," << trajetS->GetEnd() << "," << trajetS->GetMoyenDeTransport();
+        current = current->next;
+    }
+    file << endl;
+}
+
 void ListeDeTrajet::Print(int indLvl) const
 // Algorithme :
 //
@@ -211,7 +284,12 @@ const char* ListeDeTrajet::GetEnd() const
 {
     return endList->value->GetEnd();
 }
-    
+
+int ListeDeTrajet::GetNbrTrajet() const
+{
+    return nbrTrajet;
+}
+
 void ListeDeTrajet::Add(const Trajet * newTrajet)
 // Algorithme :
 //
@@ -229,6 +307,8 @@ void ListeDeTrajet::Add(const Trajet * newTrajet)
         endList->next = newElem;
         endList = newElem;
     }
+
+    nbrTrajet++;
 }
 
 //------------------------------------------------- Surcharge d'opérateurs
@@ -244,6 +324,7 @@ ListeDeTrajet::ListeDeTrajet()
 
     listTrajet = NULL;
     endList = NULL;
+    nbrTrajet = 0;
 }
 
 ListeDeTrajet::~ListeDeTrajet ( )

@@ -5,6 +5,9 @@
 //--------------------------------------------------- Interfaces utilisées
 
 #include "Trajet.h"
+#include <fstream>
+#include <string>
+using namespace std;
 
 //------------------------------------------------------------- Constantes
 
@@ -67,11 +70,24 @@ public:
     //      Retourne la ville d'arrivée du dernier trajet de la liste.
     //      Si la liste est vide, retourne NULL.
 
+    int GetNbrTrajet() const;
+    // Mode d'emploi :
+    //      Retourne le nombre de trajets dans la liste.
+    // Contrat :
+    //
+
     void Add (const Trajet * newTrajet);
     // Mode d'emploi :
     //    Ajoute un nouveau trajet à la fin de la liste.
     // Contrat :
     //
+
+    void WriteInOfstream(ofstream & file) const;
+    // Mode d'emploi :
+    //      Écrit dans le flux file les informations de tous les trajets
+    //      de la liste selon le format défini dans modele_fichier.
+    // Contrat :
+    //      file doit être un flux valide et ouvert en écriture.
 
 //------------------------------------------------- Surcharge d'opérateurs
 
@@ -132,6 +148,7 @@ protected:
 
     elem * listTrajet; // Pointeur vers le premier élément de la liste
     elem * endList; // Pointeur vers le dernier élément de la liste
+    int nbrTrajet; // Nombre de trajets dans la liste
 
 };
 

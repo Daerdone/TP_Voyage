@@ -33,7 +33,14 @@ const char * Trajet::GetEnd ( ) const
 //
 {
     return end;
-} 
+}
+
+int Trajet::GetType() const
+// Algorithme :
+//
+{
+    return typeTrajet;
+}
 
 //------------------------------------------------- Surcharge d'opérateurs
 
@@ -56,7 +63,7 @@ Trajet::~Trajet ( )
 
 //----------------------------------------------------- Méthodes protégées
 
-Trajet::Trajet ()
+Trajet::Trajet (int type) : typeTrajet(type)
 // Algorithme :
 //
 {
@@ -68,7 +75,7 @@ Trajet::Trajet ()
 	end = NULL;
 }
 
-Trajet::Trajet (const char *startIn, const char *endIn)
+Trajet::Trajet (const char *startIn, const char *endIn, int type) : typeTrajet(type)
 // Algorithme :
 //
 {

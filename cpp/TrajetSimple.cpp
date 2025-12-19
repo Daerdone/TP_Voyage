@@ -28,7 +28,7 @@ void TrajetSimple::Print() const
 
 //-------------------------------------------- Constructeurs - destructeur
 
-TrajetSimple::TrajetSimple (const TrajetSimple & unTrajetSimple ) : Trajet(unTrajetSimple.GetStart(), unTrajetSimple.GetEnd())
+TrajetSimple::TrajetSimple (const TrajetSimple & unTrajetSimple ) : Trajet(unTrajetSimple.GetStart(), unTrajetSimple.GetEnd(), 0)
 // Algorithme :
 //
 {
@@ -40,7 +40,7 @@ TrajetSimple::TrajetSimple (const TrajetSimple & unTrajetSimple ) : Trajet(unTra
     strcpy(moyenDeTransport, unTrajetSimple.GetMoyenDeTransport());
 }
 
-TrajetSimple::TrajetSimple(const char* start, const char* end, const char* Transport) : Trajet(start, end)
+TrajetSimple::TrajetSimple(const char* start, const char* end, const char* Transport) : Trajet(start, end, 0)
 // Algorithme :
 //
 {

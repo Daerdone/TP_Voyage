@@ -32,6 +32,12 @@ public:
     // Contrat :
     //
 
+    int GetNbrSubTrajets() const;
+    // Mode d'emploi :
+    //      Retourne le nombre de TrajetSimples composant le TrajetCompose.
+    // Contrat :
+    //
+
     void AddTrajet(const char * start, const char * end, const char * moyenDeTransport);
     // Mode d'emploi :
     //		Crée un TrajetSimple et l'ajoute à la liste de trajets
@@ -41,11 +47,16 @@ public:
     //      Il faut que le trajet soit valide, c'est à dire que chaque
     //      ville de départ soit la ville d'arrivée du trajet précédent.
 
+    void WriteInOfstream(ofstream & file) const;
+    // Mode d'emploi :
+    //      Écrit dans le flux file les informations du TrajetCompose
+    //      selon le format défini dans modele_fichier.
+    // Contrat :
+    //      file doit être un flux valide et ouvert en écriture.
+
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
-
-
     TrajetCompose ();
     // Mode d'emploi :
     // 		Initialise une ListeDeTrajet vide

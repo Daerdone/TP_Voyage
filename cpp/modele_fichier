@@ -1,9 +1,5 @@
-[nbr trajet],[nbr trajet S],[nbr trajet C]\n
-
-[trajets ordonnées par :
-1. ordre alphabétique ville de départ
-2. puis ordre alphabétique ville d'arrivée
-
-Traj.S. : [0],[départ],[arrivée],[moyen de T.]\n
+[nbr trajet]\n
+[Liste de trajets :
+Traj.S. : 0                   ,[départ],[arrivée],[moyen de T.]\n
 Traj.C. : [nbr de sous_trajet],[départ],[arrivée],[[depart1],[arrivée1],[MdT],[arrivée2],[MdT],...]\n
 ]
