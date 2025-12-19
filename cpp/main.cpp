@@ -35,6 +35,9 @@ int main()
         } else if (!strcmp(command, "help"))
         {
             PrintMenu();
+        } else if (!strcmp(command, "save"))
+        {
+            catalogue.AskSave();
         } else
         {
             cout << "Commande inconnue (\"" << command << "\"). Tapez \"help\" pour afficher la liste des commandes." << endl;
@@ -52,5 +55,6 @@ void PrintMenu()
     cout << "- search   : chercher un trajet dans le catalogue" << endl;
     cout << "- help     : afficher ce menu" << endl;
     cout << "- bye      : quitter le programme" << endl;
+    cout << "- save     : sauvegarder le catalogue dans un fichier" << endl;
 }
 

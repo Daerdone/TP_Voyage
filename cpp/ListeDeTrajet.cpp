@@ -5,6 +5,7 @@
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <string>
 #include <cstring>
 
 //------------------------------------------------------ Include personnel
@@ -117,6 +118,63 @@ void ListeDeTrajet::AskSearch() const
 
     delete[] start;
     delete[] end;
+}
+
+void ListeDeTrajet::AskSave() const
+// Algorithme :
+//
+{
+    string filename;
+    string criteria;
+
+    cout << endl << "Sauvegarde du catalogue :" << endl;
+    cout << ">> Entrez le nom du fichier : ";
+    cin >> filename;
+
+    cout << "Critères de sélection (a/s/c) : " << endl;
+    cout << "- *a : tous les trajets" << endl;
+    cout << "- *s : trajets simples uniquement" << endl;
+    cout << "- *c : trajets composés uniquement" << endl;
+    cout << "- ville départ = ville arrivée : selon la ville de départ et/ou d'arrivée" << endl;
+    cout << "- [n,m] : selon les indices n et m des trajets dans le catalogue (ex: 0,3)" << endl;
+    cout << ">> ";
+    cin >> criteria;
+
+    if (criteria.length() == 0)
+    {
+        cout << "Critères invalides. Retour au menu." << endl;
+        return;
+    }
+    else if (criteria.at(0) == '*')
+    {
+        SaveToFile(filename, criteria[1]);
+    }
+    else if (criteria.at(0) == '[')
+    {
+        size_t commaPos = criteria.find(',');
+        size_t endBracketPos = criteria.find(']');
+
+        int n = stoi(criteria.substr(1, commaPos - 1));
+        int m = stoi(criteria.substr(commaPos + 1, endBracketPos - commaPos - 1));
+
+        SaveToFile(filename, n, m);
+    }
+    else {
+        size_t equalPos = criteria.find('=');
+
+        if (equalPos != string::npos)
+        {
+            string startCity = criteria.substr(0, equalPos);
+            string endCity = criteria.substr(equalPos + 1);
+
+            SaveToFile(filename, startCity, endCity);
+        }
+        else
+        {
+            cout << "Critères invalides. Retour au menu." << endl;
+            return;
+        }
+    }
 }
 
 void ListeDeTrajet::Print(int indLvl) const

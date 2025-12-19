@@ -48,6 +48,13 @@ public:
     //      Demande à l'utilisateur de saisir les villes de départ
     //      et d'arrivée pour une recherche.
     // Contrat :
+    //
+
+    void AskSave() const;
+    // Mode d'emploi :
+    //      Demande à l'utilisateur de saisir les critères de sélection
+    //      et le nom du fichier pour sauvegarder le catalogue dans un fichier.
+    // Contrat :
     // 
 
     const char* GetStart() const;
@@ -103,6 +110,23 @@ protected:
     //      trajets, used et path sont des tableaux de taille count,
     //      depth correspond à la profondeur courante, found passe à true
     //      dès qu'un chemin complet est identifié.
+
+    void SaveToFile(const string & filename, const char & criteria) const;
+    // Mode d'emploi :
+    //      Sauvegarde le catalogue dans le fichier filename
+    //      selon le critère spécifié (a, s ou c).
+    // Contrat :
+    //      filename et criteria ne doivent pas être NULL.
+
+    void SaveToFile(const string & filename, int indice_deb, int indice_fin) const;
+    // Mode d'emploi :
+    //      Sauvegarde le catalogue dans le fichier filename
+    //      selon les indices spécifiés.
+    // Contrat :
+    //      filename ne doit pas être NULL. indice_deb et indice_fin
+    //      doivent être valides.
+
+    void SaveToFile(const string & filename, const string & startCity, const string & endCity) const;
 
 //----------------------------------------------------- Attributs protégés
 
